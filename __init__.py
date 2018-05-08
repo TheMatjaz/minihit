@@ -6,6 +6,9 @@
 # This file is part of the MiniHit project which is released under
 # the BSD 3-clause license.
 
+# noinspection PyUnresolvedReferences
 from .fileload import ConflictSetsFileParser
+# noinspection PyUnresolvedReferences
 from .rctree import RcTree
+# noinspection PyUnresolvedReferences
 from .hsdag import HsDag

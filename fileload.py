@@ -12,10 +12,10 @@ import collections
 class ConflictSetsFileParser(object):
     def __init__(self,
                  input_file_name,
-                 comment_char = '#',
-                 set_separator = '|',
-                 element_separator = ',',
-                 element_caster_function = int):
+                 comment_char='#',
+                 set_separator='|',
+                 element_separator=',',
+                 element_caster_function=int):
         self.input_file_name = input_file_name
         self.comment_char = comment_char
         self.set_separator = set_separator

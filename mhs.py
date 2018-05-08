@@ -26,7 +26,7 @@ class CustomSet(set):
                 return False
         return True
 
-    def is_minimal(sets):
+    def is_minimal(self, sets):
         for other_set in sets:
             if self > other_set:
                 return False
