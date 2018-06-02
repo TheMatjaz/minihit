@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from unittest import TestCase
+
+from minihit.mhs import SolutionSet
+
+
+class TestSolutionSet(TestCase):
+    def setUp(self):
+        self.conflict_sets = [{1, 2}, {3, 4}, {1, 2, 5}]
+
+    def test_empty_is_not_hitting(self):
+        solution_set = SolutionSet()
+        self.assertFalse(solution_set.is_hitting(self.conflict_sets))
+
+    def test_is_hitting_when_hitting(self):
+        solution_set = SolutionSet([1, 2, 3])
+        self.assertTrue(solution_set.is_hitting(self.conflict_sets))
+
+    def test_is_not_hitting_when_not_hitting(self):
+        solution_set = SolutionSet([99])
+        self.assertFalse(solution_set.is_hitting(self.conflict_sets))
+
+    def test_empty_is_not_minimal(self):
+        solution_set = SolutionSet()
+        self.assertFalse(solution_set.is_minimal(self.conflict_sets))
+
+    def test_is_minimal_when_minimal(self):
+        solution_set = SolutionSet([1])
+        self.assertTrue(solution_set.is_minimal(self.conflict_sets))
+
+    def test_is_not_minimal_when_not_minimal(self):
+        solution_set = SolutionSet([1, 2, 3, 4, 5, 6, 7])
+        self.assertFalse(solution_set.is_minimal(self.conflict_sets))
+
+    def test_empty_is_not_minimal_hitting(self):
+        solution_set = SolutionSet()
+        self.assertFalse(solution_set.is_minimal_hitting(self.conflict_sets))
+
+    def test_is_minimal_hitting_when_minimal_hitting(self):
+        solution_set = SolutionSet([1, 3])
+        self.assertTrue(solution_set.is_minimal_hitting(self.conflict_sets))
+
+    def test_is_not_minimal_hitting_when_not_hitting(self):
+        solution_set = SolutionSet([99])
+        self.assertFalse(solution_set.is_minimal_hitting(self.conflict_sets))
+
+    def test_is_not_minimal_hitting_when_not_minimal(self):
+        solution_set = SolutionSet([1, 2, 3, 4, 5, 6, 7])
+        self.assertFalse(solution_set.is_minimal_hitting(self.conflict_sets))
