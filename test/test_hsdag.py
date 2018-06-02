@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
 
-from minihit.hsdag import HsDagNode
+from minihit.hsdag import HsDag, HsDagNode
 
 
 class TestHsDagNode(TestCase):
@@ -39,3 +39,30 @@ class TestHsDagNode(TestCase):
         node.label = {1, 2, 3}
         with self.assertRaises(ValueError):
             node.label = {667, 987564}
+
+
+class TestHsDag(TestCase):
+    def test_empty_conflict_sets_does_nothing(self):
+        hs_dag = HsDag([])
+        hs_dag.solve()
+        self.assertEqual(0, len(hs_dag.nodes))
+        self.assertEqual([], list(hs_dag.minimal_hitting_sets()))
+        self.assertIsNone(hs_dag.root)
+
+    def test_solving_conflict_sets_1(self):
+        conflict_sets = [{1, 3}, {1, 4}]
+        expected_mhs = [{1}, {1, 3}, {3, 4}]
+        hs_dag = HsDag(conflict_sets)
+        hs_dag.solve()
+        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+
+    def test_solving_conflict_sets_2(self):
+        conflict_sets = [{1, 2}, {3, 4}]
+        expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
+        hs_dag = HsDag(conflict_sets)
+        hs_dag.solve()
+        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+
+    def test_solving_conflict_sets_3(self):
+        self.fail()
+        # TODO

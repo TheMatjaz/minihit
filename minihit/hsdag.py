@@ -48,12 +48,28 @@ class HsDagNode(object):
         else:
             self._label = new_label
 
+    def __str__(self):
+        format_string = "HsDagNode, path={:}, label={:}"
+        if self.is_ticked:
+            label = '✓'
+        else:
+            label = self.label
+        if self.is_closed:
+            format_string += ", closed"
+        return format_string.format(self.path_from_root, label)
+
 
 class HsDag(mhs.MinimalHittingsetProblem):
     def __init__(self, conflict_sets: List[set]):
         super().__init__(conflict_sets)
-        self.root = None
         self.nodes_to_process = queue.deque()
+
+    @property
+    def root(self):
+        try:
+            return self.nodes[0]
+        except IndexError:
+            return None
 
     def minimal_hitting_sets(self) -> Generator[mhs.SolutionSet, None, None]:
         for node in self.nodes:
@@ -65,15 +81,16 @@ class HsDag(mhs.MinimalHittingsetProblem):
             # Empty list of conflict sets, nothing to do
             return
         self._sort_confict_sets_by_cardinality()
-        self.root = HsDagNode()
-        self.nodes_to_process.append(self.root)
+        root = HsDagNode()
+        self.nodes_to_process.append(root)
         while self.nodes_to_process:
-            processed_node = self.nodes_to_process.pop()
+            node_in_processing = self.nodes_to_process.popleft()
             # TODO Closing here
-            self._label_node(processed_node)
+            self._label_node(node_in_processing)
             # TODO Pruning here
-            if processed_node.label is not None:
-                self._generate_edges(processed_node)
+            if node_in_processing.label is not None:
+                self._generate_edges(node_in_processing)
+            self.nodes.append(node_in_processing)
 
     def _label_node(self, processed_node: HsDagNode):
         for conflict_set in self.conflict_sets:
@@ -87,6 +104,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
             # TODO Reusing nodes here
             child_node = HsDagNode()
             child_node.parents[conflict] = processed_node
+            child_node.path_from_root.extend(processed_node.path_from_root)
             child_node.path_from_root.append(conflict)
             processed_node.children[conflict] = child_node
             self.nodes_to_process.append(child_node)

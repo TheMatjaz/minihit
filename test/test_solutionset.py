@@ -49,3 +49,19 @@ class TestSolutionSet(TestCase):
     def test_is_not_minimal_hitting_when_not_minimal(self):
         solution_set = SolutionSet([1, 2, 3, 4, 5, 6, 7])
         self.assertFalse(solution_set.is_minimal_hitting(self.conflict_sets))
+
+    def test_equality_between_solutionsets(self):
+        solution_set_1 = SolutionSet()
+        solution_set_2 = SolutionSet()
+        self.assertEqual(solution_set_1, solution_set_2)
+        solution_set_1 = SolutionSet([1, 2])
+        solution_set_2 = SolutionSet([1, 2])
+        self.assertEqual(solution_set_1, solution_set_2)
+
+    def test_equality_between_solutionset_and_set(self):
+        solution_set_1 = SolutionSet()
+        set_2 = set()
+        self.assertEqual(solution_set_1, set_2)
+        solution_set_1 = SolutionSet([1, 2])
+        set_2 = {1, 2}
+        self.assertEqual(solution_set_1, set_2)
