@@ -60,10 +60,16 @@ class HsDagNode(object):
 
 
 class HsDag(mhs.MinimalHittingsetProblem):
+    nodes_to_process: queue.deque[HsDagNode]
+
     def __init__(self, conflict_sets: List[set]):
         super().__init__(conflict_sets)
         self.nodes_to_process = queue.deque()
         self.pruning = False
+
+    # If you sort, you don't need to prune.
+    # If you get the conflict_Sets one by one, you cannot sort.
+    # Pruning is still required to reduce the size of the DAG.
 
     @property
     def root(self):
@@ -87,9 +93,9 @@ class HsDag(mhs.MinimalHittingsetProblem):
         self.nodes_to_process.append(root)
         while self.nodes_to_process:
             node_in_processing = self.nodes_to_process.popleft()
-            if self.pruning:
-                pass
-                # TODO Closing here
+            self._attempt_closing_node(node_in_processing)
+            if node_in_processing.is_closed:
+                continue
             self._label_node(node_in_processing)
             if self.pruning:
                 pass
@@ -98,107 +104,116 @@ class HsDag(mhs.MinimalHittingsetProblem):
                 self._generate_edges(node_in_processing)
             self.nodes.append(node_in_processing)
 
-    def _label_node(self, processed_node: HsDagNode):
-        for conflict_set in self.conflict_sets:
-            if conflict_set.isdisjoint(processed_node.path_from_root):
-                processed_node.label = conflict_set
-                return
-        processed_node.tick()
+    def _attempt_closing_node(self, node_in_processing: HsDagNode):
+        for other_node in self.nodes:
+            if (other_node.path_from_root.issubset(
+                    node_in_processing.path_from_root)
+                    and other_node.is_ticked):
+                node_in_processing.close()
 
-    def _generate_edges(self, processed_node: HsDagNode):
-        for conflict in processed_node.label:
-            child_node = self._child_node_potentially_reused(processed_node,
-                                                             conflict)
-            child_node.parents[conflict] = processed_node
-            child_node.path_from_root.extend(processed_node.path_from_root)
+    def _label_node(self, node_in_processing: HsDagNode):
+        for conflict_set in self.conflict_sets:
+            if conflict_set.isdisjoint(node_in_processing.path_from_root):
+                node_in_processing.label = conflict_set
+                return
+        node_in_processing.tick()
+
+    def _generate_edges(self, node_in_processing: HsDagNode):
+        for conflict in node_in_processing.label:
+            child_node = self._child_node_potentially_reused(
+                node_in_processing,
+                conflict)
+            child_node.parents[conflict] = node_in_processing
+            child_node.path_from_root.extend(node_in_processing.path_from_root)
             child_node.path_from_root.append(conflict)
-            processed_node.children[conflict] = child_node
+            node_in_processing.children[conflict] = child_node
             self.nodes_to_process.append(child_node)
 
-    def _child_node_potentially_reused(self, processed_node: HsDagNode,
+    def _child_node_potentially_reused(self, node_in_processing: HsDagNode,
                                        conflict) -> HsDagNode:
-        processed_node_path_with_conflict = \
-            set(processed_node.path_from_root).union(conflict)
+        node_in_processing_path_with_conflict = \
+            set(node_in_processing.path_from_root).union(conflict)
         for other_node in self.nodes:
-            if other_node.path_from_root == processed_node_path_with_conflict:
+            if other_node.path_from_root == \
+                    node_in_processing_path_with_conflict:
                 return other_node
         return HsDagNode()
 
-
-
     #
     #     for conflict_set in self.conflict_sets:
-    #         processed_node = HsDagNode()
-    #         self._process_node(processed_node)
+    #         node_in_processing = HsDagNode()
+    #         self._process_node(node_in_processing)
     #
     #
     #         try:
     #             unlabeled_node = self.nodes_to_process.pop()
-    #             processed_node = HsDagNode()
-    #             self._attempt_closing_node(processed_node)
-    #             if processed_node.is_closed:
+    #             node_in_processing = HsDagNode()
+    #             self._attempt_closing_node(node_in_processing)
+    #             if node_in_processing.is_closed:
     #                 continue
-    #             self._attempt_labeling_node(processed_node)
+    #             self._attempt_labeling_node(node_in_processing)
     #             # TODO: Pruning here
-    #             if processed_node.label is not None:
-    #                 self._generate_edges(processed_node)
+    #             if node_in_processing.label is not None:
+    #                 self._generate_edges(node_in_processing)
     #             if len(self.nodes) == 0:
-    #                 self.root = processed_node
-    #             self.nodes.append(processed_node)
+    #                 self.root = node_in_processing
+    #             self.nodes.append(node_in_processing)
     #         except IndexError as no_more_unlabeled_nodes:
     #             return
     #
     #     while self.nodes_to_process:
     #         unlabeled_node = self.nodes_to_process.pop()
     #
-    #         for processed_node in []:
-    #             if self._attempt_closing_node(processed_node):
+    #         for node_in_processing in []:
+    #             if self._attempt_closing_node(node_in_processing):
     #                 continue
-    #             self._attempt_labeling_node(processed_node)
+    #             self._attempt_labeling_node(node_in_processing)
     #             if self.pruning_enabled:
-    #                 removed_processed_node = self._pruning(processed_node)
-    #                 if removed_processed_node:
+    #                 removed_node_in_processing = self._pruning(
+    # node_in_processing)
+    #                 if removed_node_in_processing:
     #                     continue
     #             self.used_conflict_sets.add(current
     #             conflict
     #             set)
-    #             if processed_node still usable:
-    #                 self.nodes.append(processed_node)
+    #             if node_in_processing still usable:
+    #                 self.nodes.append(node_in_processing)
     #
-    # def _attempt_closing_node(self, processed_node: HsDagNode):
+    # def _attempt_closing_node(self, node_in_processing: HsDagNode):
     #     # Step 1 of the algorithm
     #     for other_node in self.nodes:
     #         if (other_node.path_from_root.issubset(
-    # processed_node.path_from_root)
+    # node_in_processing.path_from_root)
     #                 and other_node.is_ticked):
-    #             processed_node.close()
+    #             node_in_processing.close()
     #
     #
     #
     #
-    # def _pruning(self, processed_node: HsDagNode):
+    # def _pruning(self, node_in_processing: HsDagNode):
     #     # Step 3 of the algorithm.
-    #     if processed_node.label not in self.used_conflict_sets:
+    #     if node_in_processing.label not in self.used_conflict_sets:
     #         for other_node in self.nodes:
-    #             if processed_node.label.issubset(other_node.label):
+    #             if node_in_processing.label.issubset(other_node.label):
     #                 # Step 3a of the algorithm.
-    #                 removed_processed_node = self._step_a(processed_node,
+    #                 removed_node_in_processing = self._step_a(
+    # node_in_processing,
     # other_node)
-    #                 if removed_processed_node:
+    #                 if removed_node_in_processing:
     #                     return True
     #                 else:
     #                     self._step_b(other_node)
     #     return False
     #
-    # def _step_a(self, processed_node: HsDagNode, other_node: HsDagNode):
-    #     difference = processed_node.label.difference(other_node.label)
-    #     other_node.label = processed_node.label
+    # def _step_a(self, node_in_processing: HsDagNode, other_node: HsDagNode):
+    #     difference = node_in_processing.label.difference(other_node.label)
+    #     other_node.label = node_in_processing.label
     #     for conflict in difference:
     #         try:
     #             node_to_remove = other_node.edges_to_children[conflict]
     #             other_node.blocked_edges.add(conflict)
     #             self._remove(node_to_remove)
-    #             if node_to_remove is processed_node:
+    #             if node_to_remove is node_in_processing:
     #                 return True
     #         except KeyError:
     #             # No node found with that conflict as edge label
@@ -217,11 +232,11 @@ class HsDag(mhs.MinimalHittingsetProblem):
     #     except KeyError:
     #         pass
     #
-    # def _find_new_edge_destination(self, processed_node: HsDagNode,
+    # def _find_new_edge_destination(self, node_in_processing: HsDagNode,
     # conflict):
     #     for other_node in self.nodes:
     #         if (other_node.path_from_root ==
-    # processed_node.path_from_root.union(
+    # node_in_processing.path_from_root.union(
     #                 conflict)):
     #             return other_node
     #     new_edge_destination = HsDagNode()
