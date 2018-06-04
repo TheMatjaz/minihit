@@ -107,14 +107,16 @@ class HsDag(mhs.MinimalHittingsetProblem):
 
     def _generate_edges(self, processed_node: HsDagNode):
         for conflict in processed_node.label:
-            child_node = self._child_node(processed_node, conflict)
+            child_node = self._child_node_potentially_reused(processed_node,
+                                                             conflict)
             child_node.parents[conflict] = processed_node
             child_node.path_from_root.extend(processed_node.path_from_root)
             child_node.path_from_root.append(conflict)
             processed_node.children[conflict] = child_node
             self.nodes_to_process.append(child_node)
 
-    def _child_node(self, processed_node: HsDagNode, conflict) -> HsDagNode:
+    def _child_node_potentially_reused(self, processed_node: HsDagNode,
+                                       conflict) -> HsDagNode:
         processed_node_path_with_conflict = \
             processed_node.path_from_root.union(conflict)
         for other_node in self.nodes:
