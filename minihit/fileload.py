@@ -68,6 +68,5 @@ class ConflictSetsFileParser(object):
             strings.append("{:3d}: {:}".format(line_number, parsed_set))
         return '\n'.join(strings)
 
-    @property
-    def sets(self):
+    def as_set_list(self):
         return list(self.sets_by_line.values())
