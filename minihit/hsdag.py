@@ -14,7 +14,7 @@ from . import mhs
 
 class HsDagNode(object):
     def __init__(self):
-        self.path_from_root = []  # Aka h(node)
+        self.path_from_root = set()  # Aka h(node)
         self.children = dict()
         self.parents = dict()
         self._closed = False
@@ -117,15 +117,16 @@ class HsDag(mhs.MinimalHittingsetProblem):
                 node_in_processing,
                 conflict)
             child_node.parents[conflict] = node_in_processing
-            child_node.path_from_root.extend(node_in_processing.path_from_root)
-            child_node.path_from_root.append(conflict)
+            child_node.path_from_root.update(node_in_processing.path_from_root)
+            child_node.path_from_root.add(conflict)
             node_in_processing.children[conflict] = child_node
             self.nodes_to_process.append(child_node)
 
     def _child_node_potentially_reused(self, node_in_processing: HsDagNode,
                                        conflict) -> HsDagNode:
         node_in_processing_path_with_conflict = \
-            set(node_in_processing.path_from_root).union(conflict)
+            node_in_processing.path_from_root.union(
+                [conflict])
         for other_node in self.nodes:
             if other_node.path_from_root == \
                     node_in_processing_path_with_conflict:
