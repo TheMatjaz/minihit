@@ -63,6 +63,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
     def __init__(self, conflict_sets: List[set]):
         super().__init__(conflict_sets)
         self.nodes_to_process = queue.deque()
+        self.pruning = False
 
     @property
     def root(self):
@@ -76,7 +77,8 @@ class HsDag(mhs.MinimalHittingsetProblem):
             if node.is_ticked:
                 yield mhs.SolutionSet(node.path_from_root)
 
-    def solve(self):
+    def solve(self, with_pruning: bool = False):
+        self.pruning = bool(with_pruning)
         if not self.conflict_sets:
             # Empty list of conflict sets, nothing to do
             return
@@ -85,9 +87,13 @@ class HsDag(mhs.MinimalHittingsetProblem):
         self.nodes_to_process.append(root)
         while self.nodes_to_process:
             node_in_processing = self.nodes_to_process.popleft()
-            # TODO Closing here
+            if self.pruning:
+                pass
+                # TODO Closing here
             self._label_node(node_in_processing)
-            # TODO Pruning here
+            if self.pruning:
+                pass
+                # TODO Pruning here
             if node_in_processing.label is not None:
                 self._generate_edges(node_in_processing)
             self.nodes.append(node_in_processing)
@@ -101,7 +107,9 @@ class HsDag(mhs.MinimalHittingsetProblem):
 
     def _generate_edges(self, processed_node: HsDagNode):
         for conflict in processed_node.label:
-            # TODO Reusing nodes here
+            if self.pruning:
+                pass
+                # TODO Reusing nodes here
             child_node = HsDagNode()
             child_node.parents[conflict] = processed_node
             child_node.path_from_root.extend(processed_node.path_from_root)
