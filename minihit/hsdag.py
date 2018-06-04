@@ -7,7 +7,8 @@
 # the BSD 3-clause license.
 
 import queue
-from typing import Generator, List, Optional
+import time
+from typing import Generator, List
 
 from . import mhs
 
@@ -89,12 +90,13 @@ class HsDag(mhs.MinimalHittingsetProblem):
             if node.is_ticked:
                 yield mhs.SolutionSet(node.path_from_root)
 
-    def solve(self, prune: bool = True, sort_beforehand: bool = False):
-        if not self.conflict_sets:
-            # Empty list of conflict sets, nothing to do
-            return
-        self._prepare_to_process_nodes(sort_beforehand)
-        self._process_nodes(prune)
+    def solve(self, prune: bool = True,
+              sort_beforehand: bool = False) -> float:
+        start_time = time.time()
+        if self.conflict_sets:
+            self._prepare_to_process_nodes(sort_beforehand)
+            self._process_nodes(prune)
+        return time.time() - start_time
 
     def _prepare_to_process_nodes(self, sort_beforehand: bool):
         if sort_beforehand:
