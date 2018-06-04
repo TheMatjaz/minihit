@@ -60,8 +60,6 @@ class HsDagNode(object):
 
 
 class HsDag(mhs.MinimalHittingsetProblem):
-    nodes_to_process: queue.deque[HsDagNode]
-
     def __init__(self, conflict_sets: List[set]):
         super().__init__(conflict_sets)
         self.nodes_to_process = queue.deque()
@@ -78,11 +76,11 @@ class HsDag(mhs.MinimalHittingsetProblem):
             if node.is_ticked:
                 yield mhs.SolutionSet(node.path_from_root)
 
-    def solve(self, with_pruning: bool = True, with_sorting: bool = False):
+    def solve(self, prune: bool = True, sort_beforehand: bool = False):
         if not self.conflict_sets:
             # Empty list of conflict sets, nothing to do
             return
-        if with_sorting:
+        if sort_beforehand:
             self._sort_confict_sets_by_cardinality()
         root = HsDagNode()
         self.nodes_to_process.append(root)
@@ -92,7 +90,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
             if node_in_processing.is_closed:
                 continue
             self._label_node(node_in_processing)
-            if with_pruning:
+            if prune:
                 pass
                 # TODO Pruning here
             if node_in_processing.label is not None:
