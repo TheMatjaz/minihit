@@ -40,11 +40,11 @@ class MinimalHittingsetProblem(object):
     def solve(self) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
 
-    def minimal_hitting_sets(self) -> Generator[SolutionSet, None, None]:
+    def generate_minimal_hitting_sets(self) -> Generator[SolutionSet, None, None]:
         raise NotImplementedError("Has to be implemented by subclass.")
 
     def verify(self) -> bool:
-        for mhs_candidate in self.minimal_hitting_sets():
+        for mhs_candidate in self.generate_minimal_hitting_sets():
             if not mhs_candidate.is_minimal_hitting(self.conflict_sets):
                 return False
         return True

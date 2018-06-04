@@ -13,7 +13,7 @@ from anytree import AnyNode, ContStyle, RenderTree
 from . import mhs
 
 
-class RcTree(mhs.MinimalHittingSetProblem):
+class RcTree(mhs.MinimalHittingsetProblem):
     def __init__(self, conflict_sets):
         super().__init__(conflict_sets)
         self.root = RcTreeNode(conflict_sets[0])
