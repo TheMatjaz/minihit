@@ -34,39 +34,74 @@ class TestHsDagNode(TestCase):
         node.tick()
         self.assertIsNone(node.label)
 
-    def test_cannot_relabel(self):
+    def test_cannot_relabel_already_ticked(self):
         node = HsDagNode()
-        node.label = {1, 2, 3}
+        node.tick()
         with self.assertRaises(ValueError):
             node.label = {667, 987564}
 
+    def test_can_relabel_non_ticked(self):
+        node = HsDagNode()
+        node.label = {1, 2, 3}
+        self.assertEqual({1, 2, 3}, node.label)
+        node.label = {9}
+        self.assertEqual({9}, node.label)
+
 
 class TestHsDag(TestCase):
+    def setUp(self):
+        self.solve_options = [
+            (False, False),
+            (False, True),
+            (True, False),
+            (True, True),
+        ]
+
     def test_empty_conflict_sets_does_nothing(self):
         hs_dag = HsDag([])
-        hs_dag.solve()
-        self.assertEqual(0, len(hs_dag.nodes))
-        self.assertEqual([], list(hs_dag.minimal_hitting_sets()))
-        self.assertIsNone(hs_dag.root)
+        for solve_args in self.solve_options:
+            elapsed = hs_dag.solve(*solve_args)
+            self.assertEqual(0, len(hs_dag.nodes))
+            self.assertEqual([], list(hs_dag.generate_minimal_hitting_sets()))
+            self.assertIsNone(hs_dag.root)
+            self.assertTrue(elapsed < 0.5)
 
-    def test_solving_conflict_sets_1_no_pruning(self):
+    def test_solving_minimal_sorted_conflict_sets_1(self):
         conflict_sets = [{1, 3}, {1, 4}]
-        expected_mhs = [{1}, {1, 3}, {3, 4}]
+        expected_mhs = [{1}, {3, 4}]
         hs_dag = HsDag(conflict_sets)
-        hs_dag.solve()
-        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(expected_mhs, list(hs_dag.generate_minimal_hitting_sets()))
 
-    def test_solving_conflict_sets_2_no_pruning(self):
-        conflict_sets = [{1, 2}, {3, 4}]
+    def test_solving_minimal_unsorted_conflict_sets_2(self):
+        conflict_sets = [{3, 4, 5}, {1}]
+        expected_mhs = [{1, 3}, {1, 4}, {1, 5}]
+        hs_dag = HsDag(conflict_sets)
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(expected_mhs, list(hs_dag.generate_minimal_hitting_sets()))
+
+    def test_solving_minimal_sorted_conflict_sets_2(self):
+        conflict_sets = [{1}, {3, 4, 5}]
+        expected_mhs = [{1, 3}, {1, 4}, {1, 5}]
+        hs_dag = HsDag(conflict_sets)
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(expected_mhs, list(hs_dag.generate_minimal_hitting_sets()))
+
+    def test_solving_nonminimal_sorted_conflict_sets_1(self):
+        conflict_sets = [{1, 2}, {3, 4}, {1, 2, 5}]
         expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
         hs_dag = HsDag(conflict_sets)
-        hs_dag.solve()
-        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(expected_mhs, list(hs_dag.generate_minimal_hitting_sets()))
 
-    def test_solving_conflict_sets_3_no_pruning(self):
+    def test_solving_nonminimal_unsorted_conflict_sets_1(self):
         conflict_sets = [{1, 2, 5}, {1, 2}, {3, 4}]
         expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
         hs_dag = HsDag(conflict_sets)
-        hs_dag.solve()
-        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
-
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(expected_mhs, list(hs_dag.generate_minimal_hitting_sets()))

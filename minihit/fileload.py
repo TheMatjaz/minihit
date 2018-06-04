@@ -11,12 +11,11 @@ import collections
 
 class ConflictSetsFileParser(object):
     def __init__(self,
-                 input_file_name,
                  comment_char='#',
                  set_separator='|',
                  element_separator=',',
                  element_caster_function=int):
-        self.input_file_name = input_file_name
+        self.input_file_name = None
         self.comment_char = comment_char
         self.set_separator = set_separator
         self.element_separator = element_separator
@@ -24,8 +23,9 @@ class ConflictSetsFileParser(object):
         self.sets_by_line = collections.OrderedDict()
         self.lines_in_file = 0
 
-    def parse(self):
+    def parse(self, input_file_name):
         self._reset()
+        self.input_file_name = input_file_name
         for line in self._clean_lines():
             self.sets_by_line[self.lines_in_file] = self._line_to_sets(line)
         return self.sets_by_line
@@ -68,6 +68,5 @@ class ConflictSetsFileParser(object):
             strings.append("{:3d}: {:}".format(line_number, parsed_set))
         return '\n'.join(strings)
 
-    @property
-    def sets(self):
+    def as_set_list(self):
         return list(self.sets_by_line.values())
