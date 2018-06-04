@@ -34,11 +34,18 @@ class TestHsDagNode(TestCase):
         node.tick()
         self.assertIsNone(node.label)
 
-    def test_cannot_relabel(self):
+    def test_cannot_relabel_already_ticked(self):
         node = HsDagNode()
-        node.label = {1, 2, 3}
+        node.tick()
         with self.assertRaises(ValueError):
             node.label = {667, 987564}
+
+    def test_can_relabel_non_ticked(self):
+        node = HsDagNode()
+        node.label = {1, 2, 3}
+        self.assertEqual({1, 2, 3}, node.label)
+        node.label = {9}
+        self.assertEqual({9}, node.label)
 
 
 class TestHsDag(TestCase):
@@ -67,6 +74,26 @@ class TestHsDag(TestCase):
         conflict_sets = [{1, 2, 5}, {1, 2}, {3, 4}]
         expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
         hs_dag = HsDag(conflict_sets)
-        hs_dag.solve(prune=False)
+        hs_dag.solve(prune=True)
         self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
 
+    def test_solving_conflict_sets_1_with_pruning(self):
+        conflict_sets = [{1, 3}, {1, 4}]
+        expected_mhs = [{1}, {3, 4}]
+        hs_dag = HsDag(conflict_sets)
+        hs_dag.solve(prune=True)
+        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+
+    def test_solving_conflict_sets_2_with_pruning(self):
+        conflict_sets = [{1, 2}, {3, 4}]
+        expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
+        hs_dag = HsDag(conflict_sets)
+        hs_dag.solve(prune=True)
+        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+
+    def test_solving_conflict_sets_3_with_pruning(self):
+        conflict_sets = [{1, 2, 5}, {1, 2}, {3, 4}]
+        expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
+        hs_dag = HsDag(conflict_sets)
+        hs_dag.solve(prune=False)
+        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
