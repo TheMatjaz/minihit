@@ -65,11 +65,6 @@ class HsDag(mhs.MinimalHittingsetProblem):
     def __init__(self, conflict_sets: List[set]):
         super().__init__(conflict_sets)
         self.nodes_to_process = queue.deque()
-        self.pruning = False
-
-    # If you sort, you don't need to prune.
-    # If you get the conflict_Sets one by one, you cannot sort.
-    # Pruning is still required to reduce the size of the DAG.
 
     @property
     def root(self):
@@ -83,12 +78,12 @@ class HsDag(mhs.MinimalHittingsetProblem):
             if node.is_ticked:
                 yield mhs.SolutionSet(node.path_from_root)
 
-    def solve(self, with_pruning: bool = False):
-        self.pruning = bool(with_pruning)
+    def solve(self, with_pruning: bool = True, with_sorting: bool = False):
         if not self.conflict_sets:
             # Empty list of conflict sets, nothing to do
             return
-        self._sort_confict_sets_by_cardinality()
+        if with_sorting:
+            self._sort_confict_sets_by_cardinality()
         root = HsDagNode()
         self.nodes_to_process.append(root)
         while self.nodes_to_process:
@@ -97,7 +92,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
             if node_in_processing.is_closed:
                 continue
             self._label_node(node_in_processing)
-            if self.pruning:
+            if with_pruning:
                 pass
                 # TODO Pruning here
             if node_in_processing.label is not None:
