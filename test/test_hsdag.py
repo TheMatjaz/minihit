@@ -49,20 +49,24 @@ class TestHsDag(TestCase):
         self.assertEqual([], list(hs_dag.minimal_hitting_sets()))
         self.assertIsNone(hs_dag.root)
 
-    def test_solving_conflict_sets_1(self):
+    def test_solving_conflict_sets_1_no_pruning(self):
         conflict_sets = [{1, 3}, {1, 4}]
         expected_mhs = [{1}, {1, 3}, {3, 4}]
         hs_dag = HsDag(conflict_sets)
         hs_dag.solve()
         self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
 
-    def test_solving_conflict_sets_2(self):
+    def test_solving_conflict_sets_2_no_pruning(self):
         conflict_sets = [{1, 2}, {3, 4}]
         expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
         hs_dag = HsDag(conflict_sets)
         hs_dag.solve()
         self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
 
-    def test_solving_conflict_sets_3(self):
-        self.fail()
-        # TODO
+    def test_solving_conflict_sets_3_no_pruning(self):
+        conflict_sets = [{1, 2, 5}, {1, 2}, {3, 4}]
+        expected_mhs = [{1, 3}, {1, 4}, {2, 3}, {2, 4}]
+        hs_dag = HsDag(conflict_sets)
+        hs_dag.solve()
+        self.assertEqual(expected_mhs, list(hs_dag.minimal_hitting_sets()))
+
