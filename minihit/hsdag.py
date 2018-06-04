@@ -118,11 +118,13 @@ class HsDag(mhs.MinimalHittingsetProblem):
     def _child_node_potentially_reused(self, processed_node: HsDagNode,
                                        conflict) -> HsDagNode:
         processed_node_path_with_conflict = \
-            processed_node.path_from_root.union(conflict)
+            set(processed_node.path_from_root).union(conflict)
         for other_node in self.nodes:
             if other_node.path_from_root == processed_node_path_with_conflict:
                 return other_node
         return HsDagNode()
+
+
 
     #
     #     for conflict_set in self.conflict_sets:
