@@ -80,10 +80,16 @@ class HsDag(mhs.MinimalHittingsetProblem):
         if not self.conflict_sets:
             # Empty list of conflict sets, nothing to do
             return
+        self._prepare_to_process_nodes(sort_beforehand)
+        self._process_nodes(prune)
+
+    def _prepare_to_process_nodes(self, sort_beforehand: bool):
         if sort_beforehand:
             self._sort_confict_sets_by_cardinality()
         root = HsDagNode()
         self.nodes_to_process.append(root)
+
+    def _process_nodes(self, prune: bool):
         while self.nodes_to_process:
             node_in_processing = self.nodes_to_process.popleft()
             self._attempt_closing_node(node_in_processing)
@@ -91,8 +97,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
                 continue
             self._label_node(node_in_processing)
             if prune:
-                pass
-                # TODO Pruning here
+                self._prune(node_in_processing)
             if node_in_processing.label is not None:
                 self._generate_edges(node_in_processing)
             self.nodes.append(node_in_processing)
@@ -111,25 +116,24 @@ class HsDag(mhs.MinimalHittingsetProblem):
                 return
         node_in_processing.tick()
 
+    def _prune(self, node_in_processing: HsDagNode):
+        pass
+
     def _generate_edges(self, node_in_processing: HsDagNode):
         for conflict in node_in_processing.label:
-            child_node = self._child_node_potentially_reused(
-                node_in_processing,
-                conflict)
+            child_node = self._edge_termination(node_in_processing, conflict)
             child_node.parents[conflict] = node_in_processing
             child_node.path_from_root.update(node_in_processing.path_from_root)
             child_node.path_from_root.add(conflict)
             node_in_processing.children[conflict] = child_node
             self.nodes_to_process.append(child_node)
 
-    def _child_node_potentially_reused(self, node_in_processing: HsDagNode,
-                                       conflict) -> HsDagNode:
-        node_in_processing_path_with_conflict = \
-            node_in_processing.path_from_root.union(
-                [conflict])
+    def _edge_termination(self, node_in_processing: HsDagNode, conflict
+                          ) -> HsDagNode:
+        path_with_conflict = node_in_processing.path_from_root.union(
+            [conflict])
         for other_node in self.nodes:
-            if other_node.path_from_root == \
-                    node_in_processing_path_with_conflict:
+            if other_node.path_from_root == path_with_conflict:
                 return other_node
         return HsDagNode()
 
