@@ -15,7 +15,7 @@ from . import mhs
 
 class HsDagNode(object):
     def __init__(self):
-        self.path_from_root = set()  # Aka h(node)
+        self.path_from_root = mhs.SolutionSet()  # a.k.a. h(node)
         self.children = dict()
         self.parents = dict()
         self._closed = False
@@ -88,7 +88,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
     def generate_minimal_hitting_sets(self) -> Generator[mhs.SolutionSet, None, None]:
         for node in self.nodes:
             if node.is_ticked:
-                yield mhs.SolutionSet(node.path_from_root)
+                yield node.path_from_root
 
     def solve(self, prune: bool = True,
               sort_beforehand: bool = False) -> float:
@@ -116,7 +116,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
                 if node_in_processing.is_not_in_dag:
                     continue
             if node_in_processing.label is not None:
-                self._generate_edges(node_in_processing)
+                self._create_children(node_in_processing)
             self.nodes.append(node_in_processing)
 
     def _attempt_closing_node(self, node_in_processing: HsDagNode):
@@ -172,7 +172,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
         except KeyError as no_child_with_that_edge:
             return None
 
-    def _generate_edges(self, node_in_processing: HsDagNode):
+    def _create_children(self, node_in_processing: HsDagNode):
         for conflict in node_in_processing.label:
             child_node = self._edge_termination(node_in_processing, conflict)
             child_node.parents[conflict] = node_in_processing
