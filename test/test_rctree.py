@@ -74,7 +74,8 @@ class TestRcTree(TestCase):
         rc_tree = RcTree(conflict_sets)
         for solve_args in self.solve_options:
             rc_tree.solve(*solve_args)
-            self.assertEqual(expected_mhs, list(rc_tree.generate_minimal_hitting_sets()))
+            self.assertEqual(expected_mhs,
+                             list(rc_tree.generate_minimal_hitting_sets()))
 
     def test_solving_minimal_unsorted_conflict_sets_2(self):
         conflict_sets = [{3, 4, 5}, {1}]
@@ -82,7 +83,8 @@ class TestRcTree(TestCase):
         rc_tree = RcTree(conflict_sets)
         for solve_args in self.solve_options:
             rc_tree.solve(*solve_args)
-            self.assertEqual(expected_mhs, list(rc_tree.generate_minimal_hitting_sets()))
+            self.assertEqual(expected_mhs,
+                             list(rc_tree.generate_minimal_hitting_sets()))
 
     def test_solving_minimal_sorted_conflict_sets_2(self):
         conflict_sets = [{1}, {3, 4, 5}]
@@ -90,7 +92,8 @@ class TestRcTree(TestCase):
         rc_tree = RcTree(conflict_sets)
         for solve_args in self.solve_options:
             rc_tree.solve(*solve_args)
-            self.assertEqual(expected_mhs, list(rc_tree.generate_minimal_hitting_sets()))
+            self.assertEqual(expected_mhs,
+                             list(rc_tree.generate_minimal_hitting_sets()))
 
     def test_solving_nonminimal_sorted_conflict_sets_1(self):
         conflict_sets = [{1, 2}, {3, 4}, {1, 2, 5}]
@@ -98,7 +101,8 @@ class TestRcTree(TestCase):
         rc_tree = RcTree(conflict_sets)
         for solve_args in self.solve_options:
             rc_tree.solve(*solve_args)
-            self.assertEqual(expected_mhs, list(rc_tree.generate_minimal_hitting_sets()))
+            self.assertEqual(expected_mhs,
+                             list(rc_tree.generate_minimal_hitting_sets()))
 
     def test_solving_nonminimal_unsorted_conflict_sets_1(self):
         conflict_sets = [{1, 2, 5}, {1, 2}, {3, 4}]
@@ -106,4 +110,5 @@ class TestRcTree(TestCase):
         rc_tree = RcTree(conflict_sets)
         for solve_args in self.solve_options:
             rc_tree.solve(*solve_args)
-            self.assertEqual(expected_mhs, list(rc_tree.generate_minimal_hitting_sets()))
+            self.assertEqual(expected_mhs,
+                             list(rc_tree.generate_minimal_hitting_sets()))
