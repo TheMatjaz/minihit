@@ -15,7 +15,7 @@ from . import mhs
 
 class HsDagNode(object):
     def __init__(self):
-        self.path_from_root = set()  # Aka h(node)
+        self.path_from_root = mhs.SolutionSet()  # Aka h(node)
         self.children = dict()
         self.parents = dict()
         self._closed = False
@@ -88,7 +88,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
     def generate_minimal_hitting_sets(self) -> Generator[mhs.SolutionSet, None, None]:
         for node in self.nodes:
             if node.is_ticked:
-                yield mhs.SolutionSet(node.path_from_root)
+                yield node.path_from_root
 
     def solve(self, prune: bool = True,
               sort_beforehand: bool = False) -> float:
