@@ -19,9 +19,13 @@ def solve_from_file(input_file_name):
                  "Conflict sets: {:}\n" \
                  "HSDAG solution: {:}\n" \
                  "RC-Tree solution: {:}\n" \
-                 "Algorithm produce same result: {:}" \
-                 "HSDAG runtime: {:f}\n" \
-                 "RC-Tree runtime: {:f}".format(
+                 "Algorithm produce same result: {:}\n" \
+                 "HSDAG runtime [s]: {:f}\n" \
+                 "RC-Tree runtime [s]: {:f}\n" \
+                 "RC-Tree faster by: {:f}\n" \
+                 "HSDAG nodes built: {:d}\n" \
+                 "RC-Tree nodes built: {:d}\n" \
+                 "RC-Tree smaller by: {:f}".format(
             line,
             conflict_sets,
             solution_hsdag,
@@ -29,8 +33,15 @@ def solve_from_file(input_file_name):
             solution_hsdag == solution_rctree,
             elapsed_hsdag,
             elapsed_rctree,
+            elapsed_hsdag / elapsed_rctree,
+            hsdag.amount_of_nodes_constructed,
+            rctree.amount_of_nodes_constructed,
+            hsdag.amount_of_nodes_constructed /
+            rctree.amount_of_nodes_constructed,
         )
         print(report)
+        hsdag.render()
+        rctree.render()
 
 
 if __name__ == '__main__':
