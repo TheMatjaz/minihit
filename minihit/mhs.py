@@ -17,16 +17,19 @@ class SolutionSet(set):
                 return False
         return True
 
-    def is_minimal(self, sets: Iterable[set]) -> bool:
+    def is_minimal_hitting(self, sets: Iterable[set]) -> bool:
         if len(self) == 0:
             return False
+        used_elements = set()
         for other_set in sets:
-            if self > other_set:
+            intersection = self.intersection(other_set)
+            used_elements.update(intersection)
+            if not intersection:
                 return False
-        return True
+        return used_elements == self
 
-    def is_minimal_hitting(self, sets: Iterable[set]) -> bool:
-        return self.is_hitting(sets) and self.is_minimal(sets)
+    def __repr__(self):
+        return '{' + ', '.join(map(str, self)) + '}'
 
 
 class MinimalHittingsetProblem(object):
@@ -41,7 +44,8 @@ class MinimalHittingsetProblem(object):
     def solve(self) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
 
-    def generate_minimal_hitting_sets(self) -> Generator[SolutionSet, None, None]:
+    def generate_minimal_hitting_sets(self) -> Generator[
+        SolutionSet, None, None]:
         raise NotImplementedError("Has to be implemented by subclass.")
 
     def verify(self) -> bool:
