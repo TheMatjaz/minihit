@@ -45,7 +45,10 @@ class ConflictSetsFileParser(object):
     def _cleaned_line(self, line):
         no_whitespaces = ''.join(line.split())
         without_comments = no_whitespaces.split(self.comment_char, 1)[0]
-        return without_comments
+        without_brackets = without_comments.replace('{', '').replace('}', '')
+        without_brackets = without_brackets.replace('[', '').replace(']', '')
+        without_brackets = without_brackets.replace('(', '').replace(')', '')
+        return without_brackets
 
     def _line_to_sets(self, line):
         line = line.strip(self.set_separator)

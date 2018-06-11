@@ -33,7 +33,11 @@ class TestConflictSetsFileParser(TestCase):
                 5: [{1, 2}, {2, 3}],
                 6: [{1, 2}],
                 7: [{1, 2}, {3, 4}],
-            }
+            },
+            '12_with_brackets.txt' :  {
+                1: [{1, 2}, {3, 4}, {1, 2, 5}],
+                2: [{2, 3}, {4, 5}, {1, 2, 5}]
+            },
         }
 
     def test_all(self):
