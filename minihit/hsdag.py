@@ -192,8 +192,8 @@ class HsDag(mhs.MinimalHittingsetProblem):
                           ) -> HsDagNode:
         path_with_conflict = node_in_processing.path_from_root.union(
             [conflict])
-        self.amount_of_nodes_constructed += 1
         for other_node in self.nodes:
             if other_node.path_from_root == path_with_conflict:
                 return other_node
+        self.amount_of_nodes_constructed += 1
         return HsDagNode()
