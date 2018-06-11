@@ -1,8 +1,110 @@
-MiniHit
+MiniHit: minimal hitting set solver in Python
 ==============================================================================
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE.md)
+![Python Version](https://img.shields.io/pypi/pyversions/Django.svg)
 
 A Python solver for the minimal hitting set problem commonly found as part of 
-diagnosis problems. MiniHit provides the algorithms HS-DAG and RC-Tree for the
-user.
+diagnosis problems.
+
+MiniHit provides the following algorithms:
+
+- [HS-DAG](http://www.cs.ru.nl/P.Lucas/teaching/KeR/Theorist/greibers-correctiontoreiter.pdf)
+  by Raymond Reiter, later corrected by Russell Greiner, Barbara A. Smith and 
+  Ralph W. Wilkerson
+- [RC-Tree](http://www.ist.tugraz.at/pill/downloads/IWPD15_p5_preprint.pdf)
+  by Ingo Pill and Thomas Quaritsch
+
+
+Requirements
+----------------------------------------
+
+- You will need Python>=3.4.
+- If you intend to use rendering functionality of the data structures
+  created by the algorithms, then you'll need
+  [Graphviz](https://graphviz.gitlab.io/download/). Install it 
+  and make sure that the `dot` executable is in your `PATH` environment
+  variable. Then install its Python wrapper with `pip install graphviz`.
+
+
+Disclaimer
+----------------------------------------
+
+This package was written for academic purposes, so **performance was never
+the main goal**. If you are willing to optimize it even further, open a
+pull request! :)
+
+
+Usage
+----------------------------------------
+
+### Module execution
+
+```bash
+# Simple computation of minimal hitting sets with all algorithms
+python -m minihit input.txt
+
+# With enabled rendering
+python -m minihit input.txt --render
+
+# With enabled rendering and saving the output files
+python -m minihit input.txt --render --output_files_prefix=/path/to/your/minimal_hitting_sets
+```
+(on your system it may be called `python3` instead of `python`).
+
+The `input.txt` file has to be formatted as follows:
+```
+1,2,3|1,3,4|6,7  # This is a comment
+|||1,1,1,1,2|  # This is the second problem with only one set {1,2}
+```
+
+which is equivalent to the following conflict sets as input:
+
+```python
+[{1, 2, 3}, {1, 3, 4}, {6, 7}]
+```
+
+
+### In a Python shell
+
+```python
+import minihit
+minihit.solve([{1, 2, 3}, {1, 3, 4}, {6, 7}])
+```
+
+
+### Direct solver usage
+
+The solver classes you may want are subclasses of the 
+`MinimalHittingsetProblem` class. In particular those are
+`RcTree` and `HsDag`.
+
+All of them share a common API inherited from the parent class.
+
+```python
+>>> import minihit
+
+# Construct solver with set of conflicts
+>>> rctree = minihit.RcTree([{1, 2, 3}, {1, 3, 4}, {6, 7}])
+
+# Run solver with optional pruning and sorting by cardinality before starting
+# the tree construction. Runtime is returned
+>>> elapsed_seconds = rctree.solve(prune=True, sort_beforehand=False)
+
+# Inspect the space complexity required
+>>> rctree.amount_of_nodes_constructed
+14
+
+# Obtain the minimal hitting sets (as a generator)
+>>> rctree.generate_minimal_hitting_sets()
+<generator object HsDag.generate_minimal_hitting_sets at 0x107be96d0>
+
+>>> list(rctree.generate_minimal_hitting_sets())
+[{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
+
+# Visualize the result, don't save output file
+>>> rctree.render()
+
+# Save output file
+>>> rctree.render("/save/to/my/file")
+```
