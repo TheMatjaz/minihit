@@ -93,15 +93,22 @@ class HsDag(mhs.MinimalHittingsetProblem):
     def solve(self, prune: bool = True,
               sort_beforehand: bool = False) -> float:
         start_time = time.time()
+        self.reset()
         if self.conflict_sets:
             self._prepare_to_process_nodes(sort_beforehand)
             self._process_nodes(prune)
         return time.time() - start_time
 
+    def reset(self):
+        self.amount_of_nodes_constructed = 0
+        self.nodes_to_process.clear()
+        self.nodes = []
+
     def _prepare_to_process_nodes(self, sort_beforehand: bool):
         if sort_beforehand:
             self._sort_confict_sets_by_cardinality()
         root = HsDagNode()
+        self.amount_of_nodes_constructed += 1
         self.nodes_to_process.append(root)
 
     def _process_nodes(self, prune: bool):
@@ -185,6 +192,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
                           ) -> HsDagNode:
         path_with_conflict = node_in_processing.path_from_root.union(
             [conflict])
+        self.amount_of_nodes_constructed += 1
         for other_node in self.nodes:
             if other_node.path_from_root == path_with_conflict:
                 return other_node

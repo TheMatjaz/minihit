@@ -31,6 +31,7 @@ class RcTree(hsdag.HsDag):
         if sort_beforehand:
             self._sort_confict_sets_by_cardinality()
         root = RcTreeNode()
+        self.amount_of_nodes_constructed += 1
         self.nodes_to_process.append(root)
 
     def _relabel_and_trim(self, node_in_processing: RcTreeNode,
@@ -80,6 +81,7 @@ class RcTree(hsdag.HsDag):
 
     def _child_node(self, node_in_processing: RcTreeNode, conflict):
         child_node = RcTreeNode()
+        self.amount_of_nodes_constructed += 1
         child_node.theta_c = node_in_processing.label.intersection(
             node_in_processing.children.keys())
         child_node.theta = child_node.theta_c.union(node_in_processing.theta)

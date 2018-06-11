@@ -33,6 +33,7 @@ class MinimalHittingsetProblem(object):
     def __init__(self, conflict_sets: List[set]):
         self.conflict_sets = conflict_sets
         self.nodes = []
+        self.amount_of_nodes_constructed = 0
 
     def _sort_confict_sets_by_cardinality(self) -> None:
         self.conflict_sets.sort(key=len)
