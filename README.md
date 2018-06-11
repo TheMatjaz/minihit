@@ -64,13 +64,32 @@ which is equivalent to the following conflict sets as input:
 [{1, 2, 3}, {1, 3, 4}, {6, 7}]
 ```
 
+**Note**: by default the set elements are integers, this can be configured
+in the `ConflictSetsFileParser` constructor. In other usage methods,
+the set elements could be anything.
+
 
 ### In a Python shell
 
 ```python
-import minihit
-minihit.solve([{1, 2, 3}, {1, 3, 4}, {6, 7}])
+>>> import minihit
+>>> minihit.solve([{1, 2, 3}, {1, 3, 4}, {6, 7}])
+Conflict sets: [{1, 2, 3}, {1, 3, 4}, {6, 7}]
+HSDAG solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
+RC-Tree solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
+Algorithm produce same result: True
+HSDAG runtime [s]: 0.000276
+RC-Tree runtime [s]: 0.000259
+RC-Tree faster by: 1.065317
+HSDAG nodes built: 17
+RC-Tree nodes built: 14
+RC-Tree smaller by: 1.214286
+
+# As mentioned above, other data types could be also used
+>>> minihit.solve([{'alpha', 'beta'}, {'alpha', 'omega'}, {'epsilon'}])
 ```
+
+
 
 
 ### Direct solver usage
