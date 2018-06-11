@@ -62,14 +62,14 @@ class HsDagNode(object):
         return self.is_orphan and self.is_childless
 
     def __str__(self):
-        format_string = "HsDagNode, path={:}, label={:}"
+        format_string = "Label: {:}\n Path: {:}"
         if self.is_ticked:
             label = '✓'
         else:
             label = self.label
         if self.is_closed:
-            format_string += ", closed"
-        return format_string.format(self.path_from_root, label)
+            format_string += "\nClosed"
+        return format_string.format(label, self.path_from_root)
 
 
 class HsDag(mhs.MinimalHittingsetProblem):
@@ -85,10 +85,34 @@ class HsDag(mhs.MinimalHittingsetProblem):
         except IndexError:
             return None
 
-    def generate_minimal_hitting_sets(self) -> Generator[mhs.SolutionSet, None, None]:
+    def generate_minimal_hitting_sets(self) -> Generator[
+        mhs.SolutionSet, None, None]:
         for node in self.nodes:
             if node.is_ticked:
                 yield node.path_from_root
+
+    def render(self, out_file=None):
+        from graphviz import Digraph
+        graph = Digraph(comment=self.__class__.__name__)
+        for node in self.nodes:
+            node_name = str(node.path_from_root)
+            graph.node(node_name, str(node))
+            for conflict, child in node.children.items():
+                child_name = str(child.path_from_root)
+                graph.edge(node_name,
+                           child_name,
+                           label=str(conflict))
+        if out_file is None:
+            out_file = self._get_temp_file_name()
+        graph.render(out_file, view=True)
+
+    def _get_temp_file_name(self):
+        import tempfile
+        import os
+        out_file = os.path.join(
+            tempfile.gettempdir(),
+            'temp_{:s}.gv'.format(self.__class__.__name__))
+        return out_file
 
     def solve(self, prune: bool = True,
               sort_beforehand: bool = False) -> float:
