@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from . import fileload, hsdag, rctree, mhs, algcompare
-
+from .fileload import ConflictSetsFileParser
+from .mhs import SolutionSet, MinimalHittingsetProblem
+from .hsdag import HsDag
+from .rctree import RcTree
 from .algcompare import solve_from_file, solve
