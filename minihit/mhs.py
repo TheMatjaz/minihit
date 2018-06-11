@@ -53,3 +53,7 @@ class MinimalHittingsetProblem(object):
             if not mhs_candidate.is_minimal_hitting(self.conflict_sets):
                 return False
         return True
+
+    def render(self, out_file=None):
+        raise NotImplementedError("Has to be implemented by subclass.")
+
