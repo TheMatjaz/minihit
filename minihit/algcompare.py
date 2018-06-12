@@ -44,7 +44,7 @@ def solve(set_of_conflicts: List[set], render: bool = False,
             solution_hsdag == solution_rctree,
             elapsed_hsdag,
             elapsed_rctree,
-            elapsed_rctree / elapsed_hsdag * 100,
+            elapsed_hsdag / elapsed_rctree * 100,
             hs_dag.amount_of_nodes_constructed,
             rc_tree.amount_of_nodes_constructed,
             rc_tree.amount_of_nodes_constructed /
