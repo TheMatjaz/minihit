@@ -16,7 +16,9 @@ elif (len(sys.argv) == 4 and sys.argv[2] == '--render'
                     output_files_prefix=output_files_prefix)
 else:
     help_text = """Unknown parameters
-Usage: python minihit input_file_name [--render [--output_files_prefix=PREFIX]]
+Usage:
+
+python -m minihit input_file_name [--render [--output_files_prefix=PREFIX]]
 
 input_file_name: path to the file containing conflict sets to parse
 render: enables the generation a graphical representations of the 
