@@ -12,8 +12,6 @@ class TestRcTreeNode(TestCase):
         self.assertFalse(node.is_ticked)
         self.assertFalse(node.is_closed)
         self.assertEqual(0, len(node.path_from_root))
-        with self.assertRaises(AttributeError):
-            _ = node.parents
         self.assertEqual(0, len(node.children))
         self.assertIsNone(node.label)
 
@@ -118,3 +116,11 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+
+    def test_solving_does_not_alter_conflict_sets(self):
+        conflict_sets = [{1, 2, 5}, {3, 4}, {1, 2}]
+        original_conflict_sets = [{1, 2, 5}, {3, 4}, {1, 2}]
+        rc_tree = RcTree(conflict_sets)
+        for solve_args in self.solve_options:
+            rc_tree.solve(*solve_args)
+            self.assertEqual(original_conflict_sets, rc_tree.conflict_sets)
