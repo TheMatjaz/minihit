@@ -51,11 +51,11 @@ class HsDagNode(object):
 
     @property
     def is_orphan(self):
-        return bool(self.parents)
+        return len(self.parents) == 0
 
     @property
     def is_childless(self):
-        return bool(self.children)
+        return len(self.children) == 0
 
     @property
     def is_not_in_dag(self):
