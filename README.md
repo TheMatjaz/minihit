@@ -58,10 +58,11 @@ The `input.txt` file has to be formatted as follows:
 |||1,1,1,1,2|  # This is the second problem with only one set {1,2}
 ```
 
-which is equivalent to the following conflict sets as input:
+which is equivalent to the following conflict sets:
 
 ```python
 [{1, 2, 3}, {1, 3, 4}, {6, 7}]
+[{1, 2}]
 ```
 
 **Note**: by default the set elements are integers, this can be configured
