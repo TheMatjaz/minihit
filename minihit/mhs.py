@@ -32,7 +32,7 @@ class SolutionSet(set):
         return '{' + ', '.join(map(str, self)) + '}'
 
 
-class MinimalHittingsetProblem(object):
+class MinimalHittingSetsProblem(object):
     def __init__(self, set_of_conflicts: List[set] = None):
         self._working_set_of_conflicts = None
         self.set_of_conflicts = set_of_conflicts
@@ -41,6 +41,7 @@ class MinimalHittingsetProblem(object):
 
     def _clone_set_of_conflicts(self, sort: bool) -> None:
         if sort:
+            # noinspection PyTypeChecker
             self._working_set_of_conflicts = sorted(self.set_of_conflicts,
                                                     key=len)
         else:
@@ -49,8 +50,8 @@ class MinimalHittingsetProblem(object):
     def solve(self, set_of_conflicts: List[set], **kwargs) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
 
-    def generate_minimal_hitting_sets(self) -> Generator[
-        SolutionSet, None, None]:
+    def generate_minimal_hitting_sets(self) \
+            -> Generator[SolutionSet, None, None]:
         raise NotImplementedError("Has to be implemented by subclass.")
 
     def verify(self) -> bool:

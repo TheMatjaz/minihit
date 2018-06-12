@@ -34,7 +34,7 @@ class TestConflictSetsFileParser(TestCase):
                 6: [{1, 2}],
                 7: [{1, 2}, {3, 4}],
             },
-            '12_with_brackets.txt' :  {
+            '12_with_brackets.txt': {
                 1: [{1, 2}, {3, 4}, {1, 2, 5}],
                 2: [{2, 3}, {4, 5}, {1, 2, 5}]
             },
@@ -47,4 +47,3 @@ class TestConflictSetsFileParser(TestCase):
             parser = ConflictSetsFileParser()
             result = parser.parse(relative_file_path)
             self.assertDictEqual(expected, result, file_name)
-

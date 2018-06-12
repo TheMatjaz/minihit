@@ -24,7 +24,8 @@ class TestSolutionSet(TestCase):
 
     def test_empty_is_not_minimal_hitting(self):
         solution_set = SolutionSet()
-        self.assertFalse(solution_set.is_minimal_hitting(self.set_of_conflicts))
+        self.assertFalse(
+            solution_set.is_minimal_hitting(self.set_of_conflicts))
 
     def test_is_minimal_hitting_when_minimal_hitting(self):
         solution_set = SolutionSet([1, 3])
@@ -32,13 +33,16 @@ class TestSolutionSet(TestCase):
 
     def test_is_not_minimal_hitting_when_not_hitting(self):
         solution_set = SolutionSet([99])
-        self.assertFalse(solution_set.is_minimal_hitting(self.set_of_conflicts))
+        self.assertFalse(
+            solution_set.is_minimal_hitting(self.set_of_conflicts))
 
     def test_is_not_minimal_hitting_when_not_minimal(self):
         solution_set = SolutionSet([1, 2, 3, 4, 5, 6, 7])
-        self.assertFalse(solution_set.is_minimal_hitting(self.set_of_conflicts))
+        self.assertFalse(
+            solution_set.is_minimal_hitting(self.set_of_conflicts))
 
-    def test_is_minimal_hitting_when_minimal_with_single_element_conflict_set(self):
+    def test_is_minimal_hitting_when_minimal_with_single_element_conflict_set(
+            self):
         solution_set = SolutionSet([1, 3])
         self.assertTrue(solution_set.is_minimal_hitting([{1}, {1, 3, 4}]))
 

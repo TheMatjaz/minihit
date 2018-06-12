@@ -85,15 +85,15 @@ class HsDagNode(object):
         return format_string.format(str(label), str(self.path_from_root))
 
 
-class HsDag(mhs.MinimalHittingsetProblem):
+class HsDag(mhs.MinimalHittingSetsProblem):
     def __init__(self, set_of_conflicts: List[set] = None):
         super().__init__(set_of_conflicts)
         self.nodes_to_process = queue.deque()
         self.root = None
         # Optimization: keep set of paths form root and set of used labels
 
-    def generate_minimal_hitting_sets(self) -> Generator[
-        mhs.SolutionSet, None, None]:
+    def generate_minimal_hitting_sets(self) \
+            -> Generator[mhs.SolutionSet, None, None]:
         for node in self.nodes:
             if node.is_ticked:
                 yield node.path_from_root
@@ -169,7 +169,8 @@ class HsDag(mhs.MinimalHittingsetProblem):
                 node_in_processing.close()
                 return
 
-    def _remove_closed_node(self, node: HsDagNode):
+    @staticmethod
+    def _remove_closed_node(node: HsDagNode):
         for conflict, parent in node.parents.items():
             parent.children.pop(conflict)
         node.parents.clear()

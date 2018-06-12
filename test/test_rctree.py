@@ -118,8 +118,8 @@ class TestRcTree(TestCase):
             self.assertTrue(rc_tree.verify())
 
     def test_solving_nonminimal_unsorted_set_of_conflicts_2(self):
-        set_of_conflicts = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15}, {9, 3},
-                         {8, 7}, {8, 9, 1, 7}]
+        set_of_conflicts = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15},
+                            {9, 3}, {8, 7}, {8, 9, 1, 7}]
         expected_mhs = [{8, 2, 3, 15}, {2, 3, 7, 15}, {8, 3, 4, 15},
                         {3, 4, 7, 15}]
         rc_tree = RcTree(set_of_conflicts)
@@ -135,4 +135,5 @@ class TestRcTree(TestCase):
         rc_tree = RcTree(set_of_conflicts)
         for solve_args in self.solve_options:
             rc_tree.solve(*solve_args)
-            self.assertEqual(original_set_of_conflicts, rc_tree.set_of_conflicts)
+            self.assertEqual(original_set_of_conflicts,
+                             rc_tree.set_of_conflicts)

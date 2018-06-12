@@ -34,17 +34,17 @@ class RcTree(hsdag.HsDag):
         other_node.label = node_in_processing.label
         for conflict in difference:
             self._trim_subdag(other_node, conflict)
-            self._update_thetas_and_create_allowed_children(other_node,
-                                                            difference)
+            self._update_prohibited_edges_and_create_allowed_children(
+                other_node, difference)
             try:
                 self._working_set_of_conflicts.remove(other_node.label)
             except ValueError as label_not_in_conflicts:
                 pass
 
-    def _update_thetas_and_create_allowed_children(
+    def _update_prohibited_edges_and_create_allowed_children(
             self, other_node: RcTreeNode, difference: set):
         for descendant in self.breadth_first_explore(other_node):
-            descendant.theta.difference_update(difference)
+            descendant.prohibited_edges.difference_update(difference)
             self._create_children(descendant)
 
     def _create_children(self, node_in_processing: RcTreeNode):

@@ -24,34 +24,35 @@ def solve(set_of_conflicts: List[set], render: bool = False,
     rc_tree = rctree.RcTree(set_of_conflicts)
     elapsed_rctree = rc_tree.solve(prune=prune, sort=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
-    report = "Conflict sets: {:}\n" \
-             "HSDAG solution: {:}\n" \
-             "RC-Tree solution: {:}\n" \
-             "Algorithm produce same result: {:}\n" \
-             "HSDAG runtime [s]: {:f}\n" \
-             "RC-Tree runtime [s]: {:f}\n" \
-             "HSDAG/RC-Tree runtime [%]: {:7.3f}\n" \
-             "HSDAG nodes constructed: {:d}\n" \
-             "RC-Tree nodes constructed: {:d}\n" \
-             "RC-Tree/HSDAG constructions [%]: {:7.3f}\n" \
-             "HSDAG nodes: {:d}\n" \
-             "RC-Tree nodes: {:d}\n" \
-             "RC-Tree/HSDAG nodes [%]: {:7.3f}".format(
-        set_of_conflicts,
-        solution_hsdag,
-        solution_rctree,
-        solution_hsdag == solution_rctree,
-        elapsed_hsdag,
-        elapsed_rctree,
-        elapsed_rctree / elapsed_hsdag * 100,
-        hs_dag.amount_of_nodes_constructed,
-        rc_tree.amount_of_nodes_constructed,
-        rc_tree.amount_of_nodes_constructed /
-        hs_dag.amount_of_nodes_constructed * 100,
-        len(hs_dag.nodes),
-        len(rc_tree.nodes),
-        len(rc_tree.nodes) / len(hs_dag.nodes) * 100,
-    )
+    report = \
+        "Conflict sets: {:}\n" \
+        "HSDAG solution: {:}\n" \
+        "RC-Tree solution: {:}\n" \
+        "Algorithm produce same result: {:}\n" \
+        "HSDAG runtime [s]: {:f}\n" \
+        "RC-Tree runtime [s]: {:f}\n" \
+        "HSDAG/RC-Tree runtime [%]: {:7.3f}\n" \
+        "HSDAG nodes constructed: {:d}\n" \
+        "RC-Tree nodes constructed: {:d}\n" \
+        "RC-Tree/HSDAG constructions [%]: {:7.3f}\n" \
+        "HSDAG nodes: {:d}\n" \
+        "RC-Tree nodes: {:d}\n" \
+        "RC-Tree/HSDAG nodes [%]: {:7.3f}".format(
+            set_of_conflicts,
+            solution_hsdag,
+            solution_rctree,
+            solution_hsdag == solution_rctree,
+            elapsed_hsdag,
+            elapsed_rctree,
+            elapsed_rctree / elapsed_hsdag * 100,
+            hs_dag.amount_of_nodes_constructed,
+            rc_tree.amount_of_nodes_constructed,
+            rc_tree.amount_of_nodes_constructed /
+            hs_dag.amount_of_nodes_constructed * 100,
+            len(hs_dag.nodes),
+            len(rc_tree.nodes),
+            len(rc_tree.nodes) / len(hs_dag.nodes) * 100,
+        )
     print(report)
     if render:
         if output_files_prefix:
