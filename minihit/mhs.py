@@ -36,7 +36,7 @@ class MinimalHittingSetsProblem(object):
     def __init__(self, set_of_conflicts: List[set] = None):
         self._working_set_of_conflicts = None
         self.set_of_conflicts = set_of_conflicts
-        self.nodes = []
+        self.nodes = set()
         self.amount_of_nodes_constructed = 0
 
     def _clone_set_of_conflicts(self, sort: bool) -> None:

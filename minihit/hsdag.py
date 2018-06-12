@@ -136,7 +136,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
     def reset(self):
         self.amount_of_nodes_constructed = 0
         self.nodes_to_process.clear()
-        self.nodes = []
+        self.nodes = set()
         self._working_set_of_conflicts = None
 
     def _prepare_to_process_nodes(self, sort: bool):
@@ -159,7 +159,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
                     continue
             if node_in_processing.label is not None:
                 self._create_children(node_in_processing)
-            self.nodes.append(node_in_processing)
+            self.nodes.add(node_in_processing)
 
     def _attempt_closing_node(self, node_in_processing: HsDagNode):
         for other_node in self.nodes:
@@ -184,7 +184,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
 
     def _prune(self, node_in_processing: HsDagNode):
         if not self._label_was_previously_used(node_in_processing):
-            for other_node in self.nodes:
+            for other_node in list(self.nodes):
                 if (not other_node.is_ticked
                         and node_in_processing.label.issubset(
                             other_node.label)):
@@ -218,10 +218,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         for subdag_node in self.breadth_first_explore(subdag_root_to_remove):
             self._unlink_immediate_children_and_parent(subdag_node)
             if subdag_node.is_orphan:
-                try:
-                    self.nodes.remove(subdag_node)
-                except ValueError as node_not_in_list:
-                    pass
+                self.nodes.discard(subdag_node)
 
     @staticmethod
     def _unlink_immediate_children_and_parent(generation_parent):
