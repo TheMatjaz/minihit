@@ -94,19 +94,19 @@ class HsDag(mhs.MinimalHittingSetsProblem):
 
     def generate_minimal_hitting_sets(self) \
             -> Generator[mhs.SolutionSet, None, None]:
-        for node in self.nodes:
+        for node in self.breadth_first_explore(self.root):
             if node.is_ticked:
                 yield node.path_from_root
 
     def render(self, out_file=None):
         from graphviz import Digraph
         graph = Digraph(comment=self.__class__.__name__)
-        for node in self.nodes:
-            node_name = str(node.path_from_root)
-            graph.node(node_name, node.name_for_render())
+        for node in self.breadth_first_explore(self.root):
+            node_id = str(node.path_from_root)
+            graph.node(node_id, node.name_for_render())
             for conflict, child in node.children.items():
                 child_name = str(child.path_from_root)
-                graph.edge(node_name,
+                graph.edge(node_id,
                            child_name,
                            label=str(conflict))
         if out_file is None:
@@ -231,6 +231,8 @@ class HsDag(mhs.MinimalHittingSetsProblem):
 
     @staticmethod
     def breadth_first_explore(root: HsDagNode):
+        if not root:
+            return
         descendants = queue.deque()
         descendants.append(root)
         while descendants:
