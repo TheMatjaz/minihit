@@ -19,10 +19,10 @@ def solve(conflict_sets: List[set], render: bool = False,
           output_files_prefix: str = None, prune: bool = True,
           sort: bool = False):
     hs_dag = hsdag.HsDag(conflict_sets)
-    elapsed_hsdag = hs_dag.solve(prune=prune, sort_beforehand=sort)
+    elapsed_hsdag = hs_dag.solve(prune=prune, sort=sort)
     solution_hsdag = list(hs_dag.generate_minimal_hitting_sets())
     rc_tree = rctree.RcTree(conflict_sets)
-    elapsed_rctree = rc_tree.solve(prune=prune, sort_beforehand=sort)
+    elapsed_rctree = rc_tree.solve(prune=prune, sort=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
     report = "Conflict sets: {:}\n" \
              "HSDAG solution: {:}\n" \

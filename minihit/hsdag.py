@@ -122,12 +122,12 @@ class HsDag(mhs.MinimalHittingsetProblem):
         return out_file
 
     def solve(self, prune: bool = True,
-              sort_beforehand: bool = False) -> float:
+              sort: bool = False) -> float:
         start_time = time.time()
         self.reset()
         if self.conflict_sets:
-            self._prepare_to_process_nodes(sort_beforehand)
-            if sort_beforehand:
+            self._prepare_to_process_nodes(sort)
+            if sort:
                 prune = False
             self._process_nodes(prune)
             self._working_conflict_sets = None  # To reduce used memory
