@@ -6,21 +6,23 @@ from . import hsdag, rctree, fileload
 
 
 def solve_from_file(input_file_name, render: bool = False,
-                    output_files_prefix: str = None):
+                    output_files_prefix: str = None, prune: bool = True,
+                    sort: bool = False):
     parser = fileload.ConflictSetsFileParser()
     parser.parse(input_file_name)
     for line, conflict_sets in parser.sets_by_line.items():
         print("Line: {:d}".format(line))
-        solve(conflict_sets, render, output_files_prefix)
+        solve(conflict_sets, render, output_files_prefix, prune, sort)
 
 
 def solve(conflict_sets: List[set], render: bool = False,
-          output_files_prefix: str = None):
+          output_files_prefix: str = None, prune: bool = True,
+          sort: bool = False):
     hs_dag = hsdag.HsDag(conflict_sets)
-    elapsed_hsdag = hs_dag.solve()
+    elapsed_hsdag = hs_dag.solve(prune=prune, sort_beforehand=sort)
     solution_hsdag = list(hs_dag.generate_minimal_hitting_sets())
     rc_tree = rctree.RcTree(conflict_sets)
-    elapsed_rctree = rc_tree.solve()
+    elapsed_rctree = rc_tree.solve(prune=prune, sort_beforehand=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
     report = "Conflict sets: {:}\n" \
              "HSDAG solution: {:}\n" \
