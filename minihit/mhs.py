@@ -33,19 +33,20 @@ class SolutionSet(set):
 
 
 class MinimalHittingsetProblem(object):
-    def __init__(self, conflict_sets: List[set] = None):
-        self._working_conflict_sets = None
-        self.conflict_sets = conflict_sets
+    def __init__(self, set_of_conflicts: List[set] = None):
+        self._working_set_of_conflicts = None
+        self.set_of_conflicts = set_of_conflicts
         self.nodes = []
         self.amount_of_nodes_constructed = 0
 
-    def _clone_conflict_sets(self, sort: bool) -> None:
+    def _clone_set_of_conflicts(self, sort: bool) -> None:
         if sort:
-            self._working_conflict_sets = sorted(self.conflict_sets, key=len)
+            self._working_set_of_conflicts = sorted(self.set_of_conflicts,
+                                                    key=len)
         else:
-            self._working_conflict_sets = self.conflict_sets.copy()
+            self._working_set_of_conflicts = self.set_of_conflicts.copy()
 
-    def solve(self, conflict_sets: List[set], **kwargs) -> None:
+    def solve(self, set_of_conflicts: List[set], **kwargs) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
 
     def generate_minimal_hitting_sets(self) -> Generator[
@@ -54,10 +55,9 @@ class MinimalHittingsetProblem(object):
 
     def verify(self) -> bool:
         for mhs_candidate in self.generate_minimal_hitting_sets():
-            if not mhs_candidate.is_minimal_hitting(self.conflict_sets):
+            if not mhs_candidate.is_minimal_hitting(self.set_of_conflicts):
                 return False
         return True
 
     def render(self, out_file=None):
         raise NotImplementedError("Has to be implemented by subclass.")
-

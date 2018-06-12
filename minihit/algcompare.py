@@ -10,18 +10,18 @@ def solve_from_file(input_file_name, render: bool = False,
                     sort: bool = False):
     parser = fileload.ConflictSetsFileParser()
     parser.parse(input_file_name)
-    for line, conflict_sets in parser.sets_by_line.items():
+    for line, set_of_conflicts in parser.sets_by_line.items():
         print("Line: {:d}".format(line))
-        solve(conflict_sets, render, output_files_prefix, prune, sort)
+        solve(set_of_conflicts, render, output_files_prefix, prune, sort)
 
 
-def solve(conflict_sets: List[set], render: bool = False,
+def solve(set_of_conflicts: List[set], render: bool = False,
           output_files_prefix: str = None, prune: bool = True,
           sort: bool = False):
-    hs_dag = hsdag.HsDag(conflict_sets)
+    hs_dag = hsdag.HsDag(set_of_conflicts)
     elapsed_hsdag = hs_dag.solve(prune=prune, sort=sort)
     solution_hsdag = list(hs_dag.generate_minimal_hitting_sets())
-    rc_tree = rctree.RcTree(conflict_sets)
+    rc_tree = rctree.RcTree(set_of_conflicts)
     elapsed_rctree = rc_tree.solve(prune=prune, sort=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
     report = "Conflict sets: {:}\n" \
@@ -37,7 +37,7 @@ def solve(conflict_sets: List[set], render: bool = False,
              "HSDAG nodes: {:d}\n" \
              "RC-Tree nodes: {:d}\n" \
              "RC-Tree/HSDAG nodes [%]: {:7.3f}".format(
-        conflict_sets,
+        set_of_conflicts,
         solution_hsdag,
         solution_rctree,
         solution_hsdag == solution_rctree,

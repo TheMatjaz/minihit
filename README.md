@@ -142,6 +142,6 @@ All of them share a common API inherited from the parent class.
 >>> rctree.solve()
 
 # Solve for another set of conflicts
->>> rctree.conflict_sets = [{1, 2}, {3}]
+>>> rctree.set_of_conflicts = [{1, 2}, {3}]
 >>> rctree.solve()
 ```

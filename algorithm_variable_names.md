@@ -6,7 +6,7 @@ HS-DAG
 
 - D = HsDag, the DAG
 - n_0 = HsDag().root, the root node
-- CS = MinimalHittingsetProblem().conflict_sets
+- CS = MinimalHittingsetProblem().set_of_conflicts
 - ✓ = HsDagNode().is_ticked
 - n = processed_node, the node to add to the DAG
 - h(n) = new_node.path_from_root

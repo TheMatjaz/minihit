@@ -19,11 +19,11 @@ class RcTreeNode(hsdag.HsDagNode):
 
 
 class RcTree(hsdag.HsDag):
-    def __init__(self, conflict_sets: List[set] = None):
-        super().__init__(conflict_sets)
+    def __init__(self, set_of_conflicts: List[set] = None):
+        super().__init__(set_of_conflicts)
 
     def _prepare_to_process_nodes(self, sort_beforehand: bool):
-        self._clone_conflict_sets(sort_beforehand)
+        self._clone_set_of_conflicts(sort_beforehand)
         self.root = RcTreeNode()
         self.amount_of_nodes_constructed += 1
         self.nodes_to_process.append(self.root)
@@ -37,7 +37,7 @@ class RcTree(hsdag.HsDag):
             self._update_thetas_and_create_allowed_children(other_node,
                                                             difference)
             try:
-                self._working_conflict_sets.remove(other_node.label)
+                self._working_set_of_conflicts.remove(other_node.label)
             except ValueError as label_not_in_conflicts:
                 pass
 
