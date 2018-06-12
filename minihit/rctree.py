@@ -22,8 +22,8 @@ class RcTree(hsdag.HsDag):
     def __init__(self, set_of_conflicts: List[set] = None):
         super().__init__(set_of_conflicts)
 
-    def _prepare_to_process_nodes(self, sort_beforehand: bool):
-        self._clone_set_of_conflicts(sort_beforehand)
+    def _prepare_to_process_nodes(self, sort: bool):
+        self._clone_set_of_conflicts(sort)
         self.root = RcTreeNode()
         self.amount_of_nodes_constructed += 1
         self.nodes_to_process.append(self.root)
@@ -44,7 +44,7 @@ class RcTree(hsdag.HsDag):
     def _update_prohibited_edges_and_create_allowed_children(
             self, other_node: RcTreeNode, difference: set):
         for descendant in self.breadth_first_explore(other_node):
-            descendant.prohibited_edges.difference_update(difference)
+            descendant.prohibited_edges.symmetric_difference_update(difference)
             self._create_children(descendant)
 
     def _create_children(self, node_in_processing: RcTreeNode):

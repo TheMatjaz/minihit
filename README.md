@@ -119,7 +119,7 @@ All of them share a common API inherited from the parent class.
 
 # Run solver with optional pruning and sorting by cardinality before starting
 # the tree construction. Runtime is returned
->>> elapsed_seconds = rctree.solve(prune=True, sort_beforehand=False)
+>>> elapsed_seconds = rctree.solve(prune=True, sort=False)
 
 # Inspect the space complexity required
 >>> rctree.amount_of_nodes_constructed

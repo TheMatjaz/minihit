@@ -139,8 +139,8 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         self.nodes = []
         self._working_set_of_conflicts = None
 
-    def _prepare_to_process_nodes(self, sort_beforehand: bool):
-        self._clone_set_of_conflicts(sort_beforehand)
+    def _prepare_to_process_nodes(self, sort: bool):
+        self._clone_set_of_conflicts(sort)
         self.root = HsDagNode()
         self.amount_of_nodes_constructed += 1
         self.nodes_to_process.append(self.root)
