@@ -62,7 +62,20 @@ class HsDagNode(object):
         return self.is_orphan and self.is_childless
 
     def __str__(self):
-        format_string = "L: {:s}, P: {:s}"
+        format_string = "(Label: {:s}, Path: {:s})"
+        if self.is_ticked:
+            label = '✓'
+        else:
+            label = self.label
+        if self.is_closed:
+            format_string += ", closed"
+        return format_string.format(str(label), str(self.path_from_root))
+
+    def __repr__(self):
+        return self.__str__()
+
+    def name_for_render(self):
+        format_string = "L: {:s}\nP: {:s}"
         if self.is_ticked:
             label = '✓'
         else:
@@ -90,7 +103,7 @@ class HsDag(mhs.MinimalHittingsetProblem):
         graph = Digraph(comment=self.__class__.__name__)
         for node in self.nodes:
             node_name = str(node.path_from_root)
-            graph.node(node_name, str(node).replace(', P', '\nP'))
+            graph.node(node_name, node.name_for_render())
             for conflict, child in node.children.items():
                 child_name = str(child.path_from_root)
                 graph.edge(node_name,
