@@ -38,7 +38,7 @@ pull request! :)
 Usage
 ----------------------------------------
 
-### Module execution
+### Package execution
 
 ```bash
 # Simple computation of minimal hitting sets with all algorithms
@@ -47,12 +47,21 @@ python -m minihit input.txt
 # With enabled rendering
 python -m minihit input.txt --render
 
-# With enabled rendering and saving the output files
-python -m minihit input.txt --render --output_files_prefix=/path/to/your/minimal_hitting_sets
+# With enabled rendering and saving the output files with a prefix
+python -m minihit input.txt --render --outprefix=/path/to/your/minimal_hitting_sets
+
+# With enabled pruning
+python -m minihit input.txt --prune
+
+# With sorting and rendering
+python -m minihit input.txt --sort --render
 ```
 (on your system it may be called `python3` instead of `python`).
 
-The `input.txt` file has to be formatted as follows:
+Executing the package without arguments returns a help text with the described
+options.
+
+The content of `input.txt` file has to be formatted as follows:
 ```
 1,2,3|1,3,4|6,7  # This is a comment
 |||1,1,1,1,2|  # This is the second problem with only one set {1,2}
@@ -79,18 +88,19 @@ Conflict sets: [{1, 2, 3}, {1, 3, 4}, {6, 7}]
 HSDAG solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
 RC-Tree solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
 Algorithm produce same result: True
-HSDAG runtime [s]: 0.000276
-RC-Tree runtime [s]: 0.000259
-RC-Tree faster by: 1.065317
-HSDAG nodes built: 17
-RC-Tree nodes built: 14
-RC-Tree smaller by: 1.214286
+HSDAG runtime [s]: 0.000265
+RC-Tree runtime [s]: 0.000245
+HSDAG/RC-Tree runtime [%]:  92.446
+HSDAG nodes constructed: 17
+RC-Tree nodes constructed: 14
+RC-Tree/HSDAG constructions [%]:  82.353
+HSDAG nodes: 13
+RC-Tree nodes: 12
+RC-Tree/HSDAG nodes [%]:  92.308
 
 # As mentioned above, other data types could be also used
 >>> minihit.solve([{'alpha', 'beta'}, {'alpha', 'omega'}, {'epsilon'}])
 ```
-
-
 
 
 ### Direct solver usage
