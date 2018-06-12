@@ -203,7 +203,10 @@ class HsDag(mhs.MinimalHittingsetProblem):
         other_node.label = node_in_processing.label
         for conflict in difference:
             self._trim_subdag(other_node, conflict)
-            self._working_conflict_sets.remove(other_node.label)
+            try:
+                self._working_conflict_sets.remove(other_node.label)
+            except ValueError as label_not_in_conflicts:
+                pass
 
     def _trim_subdag(self, parent_node: HsDagNode, edge_to_trim):
         try:
