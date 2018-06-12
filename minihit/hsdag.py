@@ -62,28 +62,22 @@ class HsDagNode(object):
         return self.is_orphan and self.is_childless
 
     def __str__(self):
-        format_string = "Label: {:}\n Path: {:}"
+        format_string = "L: {:s}\nP: {:s}"
         if self.is_ticked:
             label = '✓'
         else:
             label = self.label
         if self.is_closed:
             format_string += "\nClosed"
-        return format_string.format(label, self.path_from_root)
+        return format_string.format(str(label), str(self.path_from_root))
 
 
 class HsDag(mhs.MinimalHittingsetProblem):
-    def __init__(self, conflict_sets: List[set]):
+    def __init__(self, conflict_sets: List[set] = None):
         super().__init__(conflict_sets)
         self.nodes_to_process = queue.deque()
+        self.root = None
         # Optimization: keep set of paths form root and set of used labels
-
-    @property
-    def root(self):
-        try:
-            return self.nodes[0]
-        except IndexError:
-            return None
 
     def generate_minimal_hitting_sets(self) -> Generator[
         mhs.SolutionSet, None, None]:
@@ -121,28 +115,30 @@ class HsDag(mhs.MinimalHittingsetProblem):
         if self.conflict_sets:
             self._prepare_to_process_nodes(sort_beforehand)
             self._process_nodes(prune)
+            self._working_conflict_sets = None  # To reduce used memory
         return time.time() - start_time
 
     def reset(self):
         self.amount_of_nodes_constructed = 0
         self.nodes_to_process.clear()
         self.nodes = []
+        self._working_conflict_sets = None
 
     def _prepare_to_process_nodes(self, sort_beforehand: bool):
-        if sort_beforehand:
-            self._sort_confict_sets_by_cardinality()
-        root = HsDagNode()
+        self._clone_conflict_sets(sort_beforehand)
+        self.root = HsDagNode()
         self.amount_of_nodes_constructed += 1
-        self.nodes_to_process.append(root)
+        self.nodes_to_process.append(self.root)
 
     def _process_nodes(self, prune: bool):
         while self.nodes_to_process:
             node_in_processing = self.nodes_to_process.popleft()
             self._attempt_closing_node(node_in_processing)
             if node_in_processing.is_closed:
+                self._remove_closed_node(node_in_processing)
                 continue
             self._label_node(node_in_processing)
-            if prune:
+            if len(self.nodes) != 0 and prune:
                 self._prune(node_in_processing)
                 if node_in_processing.is_not_in_dag:
                     continue
@@ -156,9 +152,15 @@ class HsDag(mhs.MinimalHittingsetProblem):
                     node_in_processing.path_from_root)
                     and other_node.is_ticked):
                 node_in_processing.close()
+                return
+
+    def _remove_closed_node(self, node: HsDagNode):
+        for conflict, parent in node.parents.items():
+            parent.children.pop(conflict)
+        node.parents.clear()
 
     def _label_node(self, node_in_processing: HsDagNode):
-        for conflict_set in self.conflict_sets:
+        for conflict_set in self._working_conflict_sets:
             if conflict_set.isdisjoint(node_in_processing.path_from_root):
                 node_in_processing.label = conflict_set
                 return
@@ -182,26 +184,40 @@ class HsDag(mhs.MinimalHittingsetProblem):
 
     def _relabel_and_trim(self, node_in_processing: HsDagNode,
                           other_node: HsDagNode):
-        difference = node_in_processing.label.difference(other_node.label)
+        difference = other_node.label.difference(node_in_processing.label)
         other_node.label = node_in_processing.label
         for conflict in difference:
             self._trim_subdag(other_node, conflict)
-            self.conflict_sets.remove(other_node.label)
+            self._working_conflict_sets.remove(other_node.label)
 
     def _trim_subdag(self, parent_node: HsDagNode, edge_to_trim):
-        parent_to_trim = parent_node
-        while parent_to_trim is not None:
-            parent_to_trim = self._unlink_child(parent_to_trim, edge_to_trim)
-
-    def _unlink_child(self, parent_node: HsDagNode, edge_to_trim):
         try:
-            child_to_remove = parent_node.children.pop(edge_to_trim)
-            child_to_remove.parents.pop(edge_to_trim)
-            if child_to_remove.is_orphan:
-                self.nodes.remove(child_to_remove)
-                return child_to_remove
-        except KeyError as no_child_with_that_edge:
-            return None
+            subdag_root_to_remove = parent_node.children.pop(edge_to_trim)
+            subdag_root_to_remove.parents.pop(edge_to_trim)
+        except KeyError:
+            return
+        for subdag_node in self.breadth_first_explore(subdag_root_to_remove):
+            self._unlink_immediate_children_and_parent(subdag_node)
+            if subdag_node.is_orphan:
+                try:
+                    self.nodes.remove(subdag_node)
+                except ValueError as node_not_in_list:
+                    pass
+
+    @staticmethod
+    def _unlink_immediate_children_and_parent(generation_parent):
+        for edge, child in generation_parent.children.items():
+            child.parents.pop(edge)
+        generation_parent.children = {}
+
+    @staticmethod
+    def breadth_first_explore(root: HsDagNode):
+        descendants = queue.deque()
+        descendants.append(root)
+        while descendants:
+            descendant = descendants.popleft()
+            descendants.extend(descendant.children.values())
+            yield descendant
 
     def _create_children(self, node_in_processing: HsDagNode):
         for conflict in node_in_processing.label:

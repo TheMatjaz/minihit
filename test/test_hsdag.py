@@ -47,6 +47,16 @@ class TestHsDagNode(TestCase):
         node.label = {9}
         self.assertEqual({9}, node.label)
 
+    def test_orphan_when_no_parents(self):
+        node = HsDagNode()
+        node.parents = dict()
+        self.assertTrue(node.is_orphan)
+
+    def test_childless_when_no_children(self):
+        node = HsDagNode()
+        node.children = dict()
+        self.assertTrue(node.is_childless)
+
 
 class TestHsDag(TestCase):
     def setUp(self):
@@ -115,3 +125,11 @@ class TestHsDag(TestCase):
             hs_dag.solve(*solve_args)
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
+
+    def test_solving_does_not_alter_conflict_sets(self):
+        conflict_sets = [{1, 2, 5}, {3, 4}, {1, 2}]
+        original_conflict_sets = [{1, 2, 5}, {3, 4}, {1, 2}]
+        hs_dag = HsDag(conflict_sets)
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(original_conflict_sets, hs_dag.conflict_sets)

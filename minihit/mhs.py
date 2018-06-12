@@ -33,15 +33,19 @@ class SolutionSet(set):
 
 
 class MinimalHittingsetProblem(object):
-    def __init__(self, conflict_sets: List[set]):
+    def __init__(self, conflict_sets: List[set] = None):
+        self._working_conflict_sets = None
         self.conflict_sets = conflict_sets
         self.nodes = []
         self.amount_of_nodes_constructed = 0
 
-    def _sort_confict_sets_by_cardinality(self) -> None:
-        self.conflict_sets.sort(key=len)
+    def _clone_conflict_sets(self, sort: bool) -> None:
+        if sort:
+            self._working_conflict_sets = sorted(self.conflict_sets, key=len)
+        else:
+            self._working_conflict_sets = self.conflict_sets.copy()
 
-    def solve(self) -> None:
+    def solve(self, conflict_sets: List[set], **kwargs) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
 
     def generate_minimal_hitting_sets(self) -> Generator[
