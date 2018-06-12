@@ -127,4 +127,11 @@ All of them share a common API inherited from the parent class.
 
 # Save output file
 >>> rctree.render("/save/to/my/file")
+
+# Solve again for the same set of conflicts
+>>> rctree.solve()
+
+# Solve for another set of conflicts
+>>> rctree.conflict_sets = [{1, 2}, {3}]
+>>> rctree.solve()
 ```
