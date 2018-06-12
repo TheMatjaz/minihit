@@ -28,21 +28,27 @@ def solve(conflict_sets: List[set], render: bool = False,
              "Algorithm produce same result: {:}\n" \
              "HSDAG runtime [s]: {:f}\n" \
              "RC-Tree runtime [s]: {:f}\n" \
-             "RC-Tree faster by: {:f}\n" \
-             "HSDAG nodes built: {:d}\n" \
-             "RC-Tree nodes built: {:d}\n" \
-             "RC-Tree smaller by: {:f}".format(
+             "HSDAG/RC-Tree runtime [%]: {:7.3f}\n" \
+             "HSDAG nodes constructed: {:d}\n" \
+             "RC-Tree nodes constructed: {:d}\n" \
+             "RC-Tree/HSDAG constructions [%]: {:7.3f}\n" \
+             "HSDAG nodes: {:d}\n" \
+             "RC-Tree nodes: {:d}\n" \
+             "RC-Tree/HSDAG nodes [%]: {:7.3f}".format(
         conflict_sets,
         solution_hsdag,
         solution_rctree,
         solution_hsdag == solution_rctree,
         elapsed_hsdag,
         elapsed_rctree,
-        elapsed_hsdag / elapsed_rctree,
+        elapsed_rctree / elapsed_hsdag * 100,
         hs_dag.amount_of_nodes_constructed,
         rc_tree.amount_of_nodes_constructed,
-        hs_dag.amount_of_nodes_constructed /
-        rc_tree.amount_of_nodes_constructed,
+        rc_tree.amount_of_nodes_constructed /
+        hs_dag.amount_of_nodes_constructed * 100,
+        len(hs_dag.nodes),
+        len(rc_tree.nodes),
+        len(rc_tree.nodes) / len(hs_dag.nodes) * 100,
     )
     print(report)
     if render:
