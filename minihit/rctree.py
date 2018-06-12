@@ -5,7 +5,7 @@
 # All rights reserved.
 # This file is part of the MiniHit project which is released under
 # the BSD 3-clause license.
-import queue
+
 from typing import List
 
 from . import hsdag
@@ -14,8 +14,8 @@ from . import hsdag
 class RcTreeNode(hsdag.HsDagNode):
     def __init__(self):
         super().__init__()
-        self.theta = set()  # a.k.a. theta(node)
-        self.theta_c = set()  # a.k.a. theta_c(node)
+        self.prohibited_edges = set()  # a.k.a. theta(node)
+        self.existing_edges = set()  # a.k.a. theta_c(node)
 
 
 class RcTree(hsdag.HsDag):
@@ -49,7 +49,8 @@ class RcTree(hsdag.HsDag):
 
     def _create_children(self, node_in_processing: RcTreeNode):
         conflicts_generating_edges = \
-            node_in_processing.label.difference(node_in_processing.theta)
+            node_in_processing.label.difference(
+                node_in_processing.prohibited_edges)
         for conflict in conflicts_generating_edges:
             node_in_processing.children[conflict] = None
             child_node = self._child_node(node_in_processing, conflict)
@@ -59,9 +60,10 @@ class RcTree(hsdag.HsDag):
     def _child_node(self, node_in_processing: RcTreeNode, conflict):
         child_node = RcTreeNode()
         self.amount_of_nodes_constructed += 1
-        child_node.theta_c = node_in_processing.label.intersection(
+        child_node.existing_edges = node_in_processing.label.intersection(
             node_in_processing.children.keys())
-        child_node.theta = child_node.theta_c.union(node_in_processing.theta)
+        child_node.prohibited_edges = child_node.existing_edges.union(
+            node_in_processing.prohibited_edges)
         child_node.parents[conflict] = node_in_processing
         child_node.path_from_root.update(node_in_processing.path_from_root)
         child_node.path_from_root.add(conflict)
