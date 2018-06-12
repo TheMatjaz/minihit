@@ -125,6 +125,19 @@ class TestHsDag(TestCase):
             hs_dag.solve(*solve_args)
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
+            self.assertTrue(hs_dag.verify())
+
+    def test_solving_nonminimal_unsorted_conflict_sets_2(self):
+        conflict_sets = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15}, {9, 3},
+                         {8, 7}, {8, 9, 1, 7}]
+        expected_mhs = [{8, 2, 3, 15}, {2, 3, 7, 15}, {8, 3, 4, 15},
+                        {3, 4, 7, 15}]
+        hs_dag = HsDag(conflict_sets)
+        for solve_args in self.solve_options:
+            hs_dag.solve(*solve_args)
+            self.assertEqual(expected_mhs,
+                             list(hs_dag.generate_minimal_hitting_sets()))
+            self.assertTrue(hs_dag.verify())
 
     def test_solving_does_not_alter_conflict_sets(self):
         conflict_sets = [{1, 2, 5}, {3, 4}, {1, 2}]
