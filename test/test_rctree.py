@@ -66,6 +66,8 @@ class TestRcTree(TestCase):
             self.assertIsNone(rc_tree.root)
             self.assertTrue(elapsed < 0.5)
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_minimal_sorted_set_of_conflicts_1(self):
         set_of_conflicts = [{1, 3}, {1, 4}]
@@ -76,6 +78,8 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_minimal_unsorted_set_of_conflicts_2(self):
         set_of_conflicts = [{3, 4, 5}, {1}]
@@ -86,6 +90,8 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_minimal_sorted_set_of_conflicts_2(self):
         set_of_conflicts = [{1}, {3, 4, 5}]
@@ -96,6 +102,8 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_sorted_set_of_conflicts_1(self):
         set_of_conflicts = [{1, 2}, {3, 4}, {1, 2, 5}]
@@ -106,6 +114,8 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_unsorted_set_of_conflicts_1(self):
         set_of_conflicts = [{1, 2, 5}, {1, 2}, {3, 4}]
@@ -116,6 +126,8 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_unsorted_set_of_conflicts_2(self):
         set_of_conflicts = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15},
@@ -128,6 +140,8 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
+            self.assertEqual(len(rc_tree.nodes),
+                             len(list(rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_does_not_alter_set_of_conflicts(self):
         set_of_conflicts = [{1, 2, 5}, {3, 4}, {1, 2}]

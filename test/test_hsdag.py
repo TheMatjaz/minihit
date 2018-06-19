@@ -76,6 +76,8 @@ class TestHsDag(TestCase):
             self.assertIsNone(hs_dag.root)
             self.assertTrue(elapsed < 0.5)
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_minimal_sorted_set_of_conflicts_1(self):
         set_of_conflicts = [{1, 3}, {1, 4}]
@@ -86,6 +88,8 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_minimal_unsorted_set_of_conflicts_2(self):
         set_of_conflicts = [{3, 4, 5}, {1}]
@@ -96,6 +100,8 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_minimal_sorted_set_of_conflicts_2(self):
         set_of_conflicts = [{1}, {3, 4, 5}]
@@ -106,6 +112,8 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_sorted_set_of_conflicts_1(self):
         set_of_conflicts = [{1, 2}, {3, 4}, {1, 2, 5}]
@@ -116,6 +124,8 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_unsorted_set_of_conflicts_1(self):
         set_of_conflicts = [{1, 2, 5}, {1, 2}, {3, 4}]
@@ -126,6 +136,8 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_unsorted_set_of_conflicts_2(self):
         set_of_conflicts = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15},
@@ -138,6 +150,8 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
+            self.assertEqual(len(hs_dag.nodes),
+                             len(list(hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_does_not_alter_set_of_conflicts(self):
         set_of_conflicts = [{1, 2, 5}, {3, 4}, {1, 2}]
