@@ -200,7 +200,8 @@ class HsDag(mhs.MinimalHittingSetsProblem):
 
     def _relabel_and_trim(self, node_in_processing: HsDagNode,
                           other_node: HsDagNode):
-        difference = other_node.label.symmetric_difference(node_in_processing.label)
+        difference = other_node.label.symmetric_difference(
+            node_in_processing.label)
         other_node.label = node_in_processing.label
         for conflict in difference:
             self._trim_subdag(other_node, conflict)

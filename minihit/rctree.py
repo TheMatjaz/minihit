@@ -36,6 +36,7 @@ class RcTreeNode(hsdag.HsDagNode):
                 return edge
         return None
 
+
 class RcTree(hsdag.HsDag):
     def __init__(self, set_of_conflicts: List[set] = None):
         super().__init__(set_of_conflicts)
@@ -73,8 +74,7 @@ class RcTree(hsdag.HsDag):
     @staticmethod
     def _create_all_allowed_edges(node: RcTreeNode):
         if node.label is not None:
-            for allowed_edge in node.label.difference(
-                    node.theta_c):
+            for allowed_edge in node.label.difference(node.theta_c):
                 node.children.setdefault(allowed_edge)
 
     def _create_children(self, node_in_processing: RcTreeNode):
