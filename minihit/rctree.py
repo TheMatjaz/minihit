@@ -49,11 +49,10 @@ class RcTree(hsdag.HsDag):
 
     def _relabel_and_trim(self, node_in_processing: RcTreeNode,
                           other_node: RcTreeNode):
-        difference = other_node.label.symmetric_difference(
-            node_in_processing.label)
+        difference = other_node.label.difference(node_in_processing.label)
         other_node.label = node_in_processing.label
         for conflict in difference:
-            other_node.theta_c.add(conflict)
+            other_node.theta_c.discard(conflict)
             self._trim_subdag(other_node, conflict)
         self._propagate_thetas_changes(other_node, difference)
         try:
@@ -66,7 +65,7 @@ class RcTree(hsdag.HsDag):
         for descendant in self.breadth_first_explore(other_node):
             if descendant is other_node:
                 continue  # Children only, not the subdag parent
-            descendant.theta_c.symmetric_difference_update(difference)
+            descendant.theta_c.difference_update(difference)
             descendant.theta = descendant.theta_c.union(
                 descendant.parent.theta)
             self._create_all_allowed_edges(descendant)
