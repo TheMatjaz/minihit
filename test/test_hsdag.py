@@ -161,3 +161,13 @@ class TestHsDag(TestCase):
             hs_dag.solve(*solve_args)
             self.assertEqual(original_set_of_conflicts,
                              hs_dag.set_of_conflicts)
+
+    def test_resetting_deletes_everything(self):
+        set_of_conflicts_initial = [{1}, {3, 4, 5}]
+        rc_tree = HsDag(set_of_conflicts_initial)
+        rc_tree.solve()
+        rc_tree.reset()
+        self.assertEqual(0, len(list(rc_tree.generate_minimal_hitting_sets())))
+        self.assertEqual(0, len(rc_tree.nodes))
+        self.assertIsNone(rc_tree.root)
+        self.assertEqual(0, len(list(rc_tree.breadth_first_explore(rc_tree.root))))

@@ -137,6 +137,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         self.amount_of_nodes_constructed = 0
         self.nodes_to_process.clear()
         self.nodes = set()
+        self.root = None
         self._working_set_of_conflicts = None
 
     def _prepare_to_process_nodes(self, sort: bool):

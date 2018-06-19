@@ -151,3 +151,13 @@ class TestRcTree(TestCase):
             rc_tree.solve(*solve_args)
             self.assertEqual(original_set_of_conflicts,
                              rc_tree.set_of_conflicts)
+
+    def test_resetting_deletes_everything(self):
+        set_of_conflicts_initial = [{1}, {3, 4, 5}]
+        rc_tree = RcTree(set_of_conflicts_initial)
+        rc_tree.solve()
+        rc_tree.reset()
+        self.assertEqual(0, len(list(rc_tree.generate_minimal_hitting_sets())))
+        self.assertEqual(0, len(rc_tree.nodes))
+        self.assertIsNone(rc_tree.root)
+        self.assertEqual(0, len(list(rc_tree.breadth_first_explore(rc_tree.root))))
