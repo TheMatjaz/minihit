@@ -3,7 +3,7 @@
 import os
 from unittest import TestCase
 
-from minihit.fileload import ConflictSetsFileParser
+from minihit.getconflicts import ConflictSetsFileParser
 
 
 class TestConflictSetsFileParser(TestCase):

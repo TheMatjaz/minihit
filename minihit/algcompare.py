@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 from typing import List
 
-from . import hsdag, rctree, fileload
+from . import hsdag, rctree, getconflicts
 
 
 def solve_from_file(input_file_name, render: bool = False,
                     output_files_prefix: str = None, prune: bool = True,
                     sort: bool = False):
-    parser = fileload.ConflictSetsFileParser()
+    parser = getconflicts.ConflictSetsFileParser()
     parser.parse(input_file_name)
     for line, set_of_conflicts in parser.sets_by_line.items():
         print("Line: {:d}".format(line))

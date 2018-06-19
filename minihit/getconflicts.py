@@ -7,6 +7,9 @@
 # the BSD 3-clause license.
 
 import collections
+import random
+
+from typing import Generator, Set
 
 
 class ConflictSetsFileParser(object):
@@ -73,3 +76,11 @@ class ConflictSetsFileParser(object):
 
     def as_set_list(self):
         return list(self.sets_by_line.values())
+
+
+def random_set_of_conflicts(amount_conflicts: int, max_cardinality: int
+                            ) -> Generator[Set[int], None, None]:
+    for i in range(amount_conflicts):
+        conflict = set(random.randint(1, max_cardinality)
+                       for i in range(max_cardinality))
+        yield conflict
