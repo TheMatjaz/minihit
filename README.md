@@ -41,6 +41,9 @@ Usage
 ### Package execution
 
 ```bash
+# No arguments to get the help text
+python -m minihit
+
 # Simple computation of minimal hitting sets with all algorithms
 python -m minihit input.txt
 
@@ -58,16 +61,13 @@ python -m minihit input.txt --sort --render
 ```
 (on your system it may be called `python3` instead of `python`).
 
-Executing the package without arguments returns a help text with the described
-options.
-
 The content of `input.txt` file has to be formatted as follows:
 ```
 1,2,3|1,3,4|6,7  # This is a comment
-|||1,1,1,1,2|  # This is the second problem with only one set {1,2}
+|||1,1,1,1,2|  # This is the second malformatted problem with only a set {1,2}
 ```
 
-which is equivalent to the following conflict sets:
+which is equivalent to the following conflict sets as in Python syntax:
 
 ```python
 [{1, 2, 3}, {1, 3, 4}, {6, 7}]
