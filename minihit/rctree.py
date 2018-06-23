@@ -36,6 +36,20 @@ class RcTreeNode(hsdag.HsDagNode):
                 return edge
         return None
 
+    def name_for_render(self):
+        format_string = "L: {:s}\nP: {:s}\nT: {:s}\nTc: {:s}"
+        if self.is_ticked:
+            label = '✓'
+        else:
+            label = self.label
+        if self.is_closed:
+            format_string += ", closed"
+        return format_string.format(
+            str(label),
+            str(self.path_from_root),
+            str(self.theta),
+            str(self.theta_c),)
+
 
 class RcTree(hsdag.HsDag):
     def __init__(self, set_of_conflicts: List[set] = None):
