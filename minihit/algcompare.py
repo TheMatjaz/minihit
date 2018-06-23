@@ -1,27 +1,73 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+"""
+High-level comparator between the HSDAG and RC-Tree algorithms.
+"""
+
 from typing import List
 
 from . import hsdag, rctree, getconflicts
 
 
-def solve_from_file(input_file_name, render: bool = False,
-                    output_files_prefix: str = None, prune: bool = True,
-                    sort: bool = False):
+def compare_from_file(input_file_name, render: bool = False,
+                      output_files_prefix: str = None, prune: bool = True,
+                      sort: bool = False):
+    """
+    Executes both HSDAG and RC-Tree on the same set of conflicts read from
+    a file, comparing runtime and memory required.
+
+    Args:
+        input_file_name: file containing iterables of conflicts (sets of
+            anything) to find the minimal hitting sets for.
+            The format has to be as specified in the `README.md`.
+        render: set to True to display the constructed DAG and tree by the
+            algorithms.
+        output_files_prefix: prefix of the filenames to create. Set to None
+            to avoid storing files.
+        prune: set to True to activate of the pruning feature of both
+            algorithms.
+        sort: set to True to sort the conflicts by cardinality before executing
+            the algorithms. This deactivates pruning, as it's no longer
+            required.
+
+    Returns:
+        None. The output is printed to STDOUT in human readable format.
+    """
     parser = getconflicts.ConflictSetsFileParser()
     parser.parse(input_file_name)
-    for line, set_of_conflicts in parser.sets_by_line.items():
+    for line, list_of_conflicts in parser.sets_by_line.items():
         print("Line: {:d}".format(line))
-        solve(set_of_conflicts, render, output_files_prefix, prune, sort)
+        compare(list_of_conflicts, render, output_files_prefix, prune, sort)
 
 
-def solve(set_of_conflicts: List[set], render: bool = False,
-          output_files_prefix: str = None, prune: bool = True,
-          sort: bool = False):
-    hs_dag = hsdag.HsDag(set_of_conflicts)
+def compare(list_of_conflicts: List[set], render: bool = False,
+            output_files_prefix: str = None, prune: bool = True,
+            sort: bool = False):
+    """
+    Executes both HSDAG and RC-Tree on the same set of conflicts,
+    comparing runtime and memory required.
+
+    Args:
+        list_of_conflicts: iterable of conflicts (sets of anything) to find
+            the minimal hitting sets for. This input list is never modified.
+        render: set to True to display the constructed DAG and tree by the
+            algorithms.
+        output_files_prefix: prefix of the filenames to create. Set to None
+            to avoid storing files.
+        prune: set to True to activate of the pruning feature of both
+            algorithms.
+        sort: set to True to sort the conflicts by cardinality before executing
+            the algorithms. This deactivates pruning, as it's no longer
+            required.
+
+    Returns:
+        None. The output is printed to STDOUT in human readable format.
+    """
+    hs_dag = hsdag.HsDag(list_of_conflicts)
     elapsed_hsdag = hs_dag.solve(prune=prune, sort=sort)
     solution_hsdag = list(hs_dag.generate_minimal_hitting_sets())
-    rc_tree = rctree.RcTree(set_of_conflicts)
+    rc_tree = rctree.RcTree(list_of_conflicts)
     elapsed_rctree = rc_tree.solve(prune=prune, sort=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
     report = \
@@ -38,7 +84,7 @@ def solve(set_of_conflicts: List[set], render: bool = False,
         "HSDAG nodes: {:d}\n" \
         "RC-Tree nodes: {:d}\n" \
         "RC-Tree/HSDAG nodes [%]: {:7.3f}".format(
-            set_of_conflicts,
+            list_of_conflicts,
             solution_hsdag,
             solution_rctree,
             solution_hsdag == solution_rctree,

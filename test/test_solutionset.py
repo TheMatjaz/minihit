@@ -8,38 +8,38 @@ from minihit.mhs import SolutionSet
 
 class TestSolutionSet(TestCase):
     def setUp(self):
-        self.set_of_conflicts = [{1, 2}, {3, 4}, {1, 2, 5}]
+        self.list_of_conflicts = [{1, 2}, {3, 4}, {1, 2, 5}]
 
     def test_empty_is_not_hitting(self):
         solution_set = SolutionSet()
-        self.assertFalse(solution_set.is_hitting(self.set_of_conflicts))
+        self.assertFalse(solution_set.is_hitting(self.list_of_conflicts))
 
     def test_is_hitting_when_hitting(self):
         solution_set = SolutionSet([1, 2, 3])
-        self.assertTrue(solution_set.is_hitting(self.set_of_conflicts))
+        self.assertTrue(solution_set.is_hitting(self.list_of_conflicts))
 
     def test_is_not_hitting_when_not_hitting(self):
         solution_set = SolutionSet([99])
-        self.assertFalse(solution_set.is_hitting(self.set_of_conflicts))
+        self.assertFalse(solution_set.is_hitting(self.list_of_conflicts))
 
     def test_empty_is_not_minimal_hitting(self):
         solution_set = SolutionSet()
         self.assertFalse(
-            solution_set.is_minimal_hitting(self.set_of_conflicts))
+            solution_set.is_minimal_hitting(self.list_of_conflicts))
 
     def test_is_minimal_hitting_when_minimal_hitting(self):
         solution_set = SolutionSet([1, 3])
-        self.assertTrue(solution_set.is_minimal_hitting(self.set_of_conflicts))
+        self.assertTrue(solution_set.is_minimal_hitting(self.list_of_conflicts))
 
     def test_is_not_minimal_hitting_when_not_hitting(self):
         solution_set = SolutionSet([99])
         self.assertFalse(
-            solution_set.is_minimal_hitting(self.set_of_conflicts))
+            solution_set.is_minimal_hitting(self.list_of_conflicts))
 
     def test_is_not_minimal_hitting_when_not_minimal(self):
         solution_set = SolutionSet([1, 2, 3, 4, 5, 6, 7])
         self.assertFalse(
-            solution_set.is_minimal_hitting(self.set_of_conflicts))
+            solution_set.is_minimal_hitting(self.list_of_conflicts))
 
     def test_is_minimal_hitting_when_minimal_with_single_element_conflict_set(
             self):

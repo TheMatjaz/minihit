@@ -86,8 +86,8 @@ class HsDagNode(object):
 
 
 class HsDag(mhs.MinimalHittingSetsProblem):
-    def __init__(self, set_of_conflicts: List[set] = None):
-        super().__init__(set_of_conflicts)
+    def __init__(self, list_of_conflicts: List[set] = None):
+        super().__init__(list_of_conflicts)
         self.nodes_to_process = queue.deque()
         self.root = None
         # Optimization: keep set of paths form root and set of used labels
@@ -125,12 +125,12 @@ class HsDag(mhs.MinimalHittingSetsProblem):
               sort: bool = False) -> float:
         start_time = time.time()
         self.reset()
-        if self.set_of_conflicts:
+        if self.list_of_conflicts:
             self._prepare_to_process_nodes(sort)
             if sort:
                 prune = False
             self._process_nodes(prune)
-            self._working_set_of_conflicts = None  # To reduce used memory
+            self._working_list_of_conflicts = None  # To reduce used memory
         return time.time() - start_time
 
     def reset(self):
@@ -138,10 +138,10 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         self.nodes_to_process.clear()
         self.nodes = set()
         self.root = None
-        self._working_set_of_conflicts = None
+        self._working_list_of_conflicts = None
 
     def _prepare_to_process_nodes(self, sort: bool):
-        self._clone_set_of_conflicts(sort)
+        self._clone_list_of_conflicts(sort)
         self.root = HsDagNode()
         self.amount_of_nodes_constructed += 1
         self.nodes_to_process.append(self.root)
@@ -177,7 +177,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         node.parents.clear()
 
     def _label_node(self, node_in_processing: HsDagNode):
-        for conflict_set in self._working_set_of_conflicts:
+        for conflict_set in self._working_list_of_conflicts:
             if conflict_set.isdisjoint(node_in_processing.path_from_root):
                 node_in_processing.label = conflict_set
                 return
@@ -206,7 +206,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         for conflict in difference:
             self._trim_subdag(other_node, conflict)
             try:
-                self._working_set_of_conflicts.remove(other_node.label)
+                self._working_list_of_conflicts.remove(other_node.label)
             except ValueError as label_not_in_conflicts:
                 pass
 

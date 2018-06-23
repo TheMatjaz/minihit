@@ -78,8 +78,19 @@ class ConflictSetsFileParser(object):
         return list(self.sets_by_line.values())
 
 
-def random_set_of_conflicts(amount_conflicts: int, max_cardinality: int
-                            ) -> Generator[Set[int], None, None]:
+def random_conflicts(amount_conflicts: int, max_cardinality: int
+                     ) -> Generator[Set[int], None, None]:
+    """
+    Generator of a random sequence of conflicts containing integers.
+
+    Args:
+        amount_conflicts: number of conflicts to generate
+        max_cardinality: maximum possible size of each conflict in the sequence
+            and maximum value that each conflict element can have.
+
+    Returns:
+        generator of the conflicts.
+    """
     for i in range(amount_conflicts):
         conflict = set(random.randint(1, max_cardinality)
                        for i in range(max_cardinality))

@@ -41,8 +41,8 @@ Usage
 ### Package execution
 
 ```bash
-# No arguments to get the help text
-python -m minihit
+# Get the help text if needed
+python -m minihit --help
 
 # Simple computation of minimal hitting sets with all algorithms
 python -m minihit input.txt
@@ -79,11 +79,11 @@ in the `ConflictSetsFileParser` constructor. In other usage methods,
 the set elements could be anything.
 
 
-### In a Python shell
+### Simple comparison between algorithms
 
 ```python
 >>> import minihit
->>> minihit.solve([{1, 2, 3}, {1, 3, 4}, {6, 7}])
+>>> minihit.compare([{1, 2, 3}, {1, 3, 4}, {6, 7}])
 Conflict sets: [{1, 2, 3}, {1, 3, 4}, {6, 7}]
 HSDAG solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
 RC-Tree solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
@@ -99,7 +99,7 @@ RC-Tree nodes: 12
 RC-Tree/HSDAG nodes [%]:  92.308
 
 # As mentioned above, other data types could be also used
->>> minihit.solve([{'alpha', 'beta'}, {'alpha', 'omega'}, {'epsilon'}])
+>>> minihit.compare([{'alpha', 'beta'}, {'alpha', 'omega'}, {'epsilon'}])
 ```
 
 
@@ -107,14 +107,13 @@ RC-Tree/HSDAG nodes [%]:  92.308
 
 The solver classes you may want are subclasses of the 
 `MinimalHittingsetProblem` class. In particular those are
-`RcTree` and `HsDag`.
-
-All of them share a common API inherited from the parent class.
+`RcTree` and `HsDag`. Both share a common API.
 
 ```python
 >>> import minihit
 
-# Construct solver with set of conflicts
+# Construct solver with set of conflicts. The methods shown below
+# are exactly the same for the HsDag class as well.
 >>> rctree = minihit.RcTree([{1, 2, 3}, {1, 3, 4}, {6, 7}])
 
 # Run solver with optional pruning and sorting by cardinality before starting
@@ -142,6 +141,6 @@ All of them share a common API inherited from the parent class.
 >>> rctree.solve()
 
 # Solve for another set of conflicts
->>> rctree.set_of_conflicts = [{1, 2}, {3}]
+>>> rctree.list_of_conflicts = [{1, 2}, {3}]
 >>> rctree.solve()
 ```

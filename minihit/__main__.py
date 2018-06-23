@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .algcompare import solve_from_file
+"""
+Parses the command line arguments when executing the package as a whole
+and passes them to `algcompare.compare_from_file()`.
+"""
+
+from .algcompare import compare_from_file
 
 import sys
 
@@ -31,7 +36,10 @@ if len(sys.argv) < 2:
     exit(1)
 for argument in sys.argv[1:]:
     argument = str(argument).lower().strip().lstrip('-')
-    if argument == 'render':
+    if argument in ('h', 'help'):
+        print(help_text.format('Minihit'))
+        exit(0)
+    elif argument == 'render':
         render = True
     elif argument == 'sort':
         sort = True
@@ -41,8 +49,8 @@ for argument in sys.argv[1:]:
         sort = False
     elif argument.startswith('outprefix'):
         output_files_prefix = argument.split('=', 1)[1]
-solve_from_file(sys.argv[1],
-                render=True,
-                output_files_prefix=output_files_prefix,
-                prune=prune,
-                sort=sort)
+compare_from_file(sys.argv[1],
+                  render=True,
+                  output_files_prefix=output_files_prefix,
+                  prune=prune,
+                  sort=sort)
