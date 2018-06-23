@@ -47,8 +47,9 @@ class RcTreeNode(hsdag.HsDagNode):
         return format_string.format(
             str(label),
             str(self.path_from_root),
-            str(self.theta),
-            str(self.theta_c),)
+            '{}' if len(self.theta) == 0 else str(self.theta),
+            '{}' if len(self.theta_c) == 0 else str(self.theta_c),
+)
 
 
 class RcTree(hsdag.HsDag):
