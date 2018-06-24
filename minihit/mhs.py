@@ -91,7 +91,7 @@ class MinimalHittingSetsProblem(object):
         else:
             self._working_list_of_conflicts = self.list_of_conflicts.copy()
 
-    def solve(self, list_of_conflicts: List[set], **kwargs) -> None:
+    def solve(self, **kwargs) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
 
     def generate_minimal_hitting_sets(self) \
