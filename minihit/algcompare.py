@@ -67,14 +67,18 @@ def compare(list_of_conflicts: List[set], render: bool = False,
     hs_dag = hsdag.HsDag(list_of_conflicts)
     elapsed_hsdag = hs_dag.solve(prune=prune, sort=sort)
     solution_hsdag = list(hs_dag.generate_minimal_hitting_sets())
+    hs_dag_solution_is_correct = hs_dag.verify()
     rc_tree = rctree.RcTree(list_of_conflicts)
     elapsed_rctree = rc_tree.solve(prune=prune, sort=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
+    rc_tree_solution_is_correct = rc_tree.verify()
     report = \
         "Conflict sets: {:}\n" \
-        "HSDAG solution: {:}\n" \
+        "HSDAG solution:   {:}\n" \
         "RC-Tree solution: {:}\n" \
         "Algorithm produce same result: {:}\n" \
+        "HSDAG solution is correct: {:}\n" \
+        "RC-Tree solution is correct: {:}\n" \
         "HSDAG runtime [s]: {:f}\n" \
         "RC-Tree runtime [s]: {:f}\n" \
         "HSDAG/RC-Tree runtime [%]: {:7.3f}\n" \
@@ -88,6 +92,8 @@ def compare(list_of_conflicts: List[set], render: bool = False,
             solution_hsdag,
             solution_rctree,
             solution_hsdag == solution_rctree,
+            hs_dag_solution_is_correct,
+            rc_tree_solution_is_correct,
             elapsed_hsdag,
             elapsed_rctree,
             elapsed_hsdag / elapsed_rctree * 100,
