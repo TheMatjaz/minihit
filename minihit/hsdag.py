@@ -244,7 +244,6 @@ class HsDag(mhs.MinimalHittingSetsProblem):
             child_node.path_from_root.update(node_in_processing.path_from_root)
             child_node.path_from_root.add(conflict)
             node_in_processing.children[conflict] = child_node
-            self.nodes_to_process.append(child_node)
 
     def _edge_termination(self, node_in_processing: HsDagNode, conflict
                           ) -> HsDagNode:
@@ -254,4 +253,6 @@ class HsDag(mhs.MinimalHittingSetsProblem):
             if other_node.path_from_root == path_with_conflict:
                 return other_node
         self.amount_of_nodes_constructed += 1
-        return HsDagNode()
+        new_node = HsDagNode()
+        self.nodes_to_process.append(new_node)
+        return new_node
