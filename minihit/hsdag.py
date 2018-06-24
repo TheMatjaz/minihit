@@ -215,12 +215,12 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         except KeyError:
             return
         for subdag_node in self.breadth_first_explore(subdag_root_to_remove):
-            self._unlink_immediate_children_and_parent(subdag_node)
+            self._unlink_immediate_children_from_parent(subdag_node)
             if subdag_node.is_orphan:
                 self.nodes.discard(subdag_node)
 
     @staticmethod
-    def _unlink_immediate_children_and_parent(generation_parent):
+    def _unlink_immediate_children_from_parent(generation_parent):
         for edge, child in generation_parent.children.items():
             child.parents.pop(edge)
         generation_parent.children = {}
