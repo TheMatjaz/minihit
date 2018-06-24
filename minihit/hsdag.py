@@ -183,7 +183,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
     def _prune(self, node_in_processing: HsDagNode):
         if not self._label_was_previously_used(node_in_processing):
             for other_node in list(self.breadth_first_explore(self.root)):
-                if (not other_node.is_ticked
+                if (other_node.label is not None
                         and node_in_processing.label < other_node.label):
                     self._relabel_and_trim(node_in_processing, other_node)
 
