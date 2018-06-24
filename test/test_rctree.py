@@ -62,14 +62,12 @@ class TestRcTree(TestCase):
         rc_tree = RcTree([])
         for solve_args in self.solve_options:
             elapsed = rc_tree.solve(*solve_args)
-            self.assertEqual(0, len(rc_tree.nodes))
             self.assertEqual([], list(rc_tree.generate_minimal_hitting_sets()))
             self.assertIsNone(rc_tree.root)
             self.assertTrue(elapsed < 0.5)
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
+            self.assertEqual(0, len(list(
+                rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_minimal_sorted_list_of_conflicts_1(self):
         list_of_conflicts = [{1, 3}, {1, 4}]
@@ -80,9 +78,6 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_minimal_unsorted_list_of_conflicts_2(self):
         list_of_conflicts = [{3, 4, 5}, {1}]
@@ -93,9 +88,6 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_minimal_sorted_list_of_conflicts_2(self):
         list_of_conflicts = [{1}, {3, 4, 5}]
@@ -106,9 +98,6 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_sorted_list_of_conflicts_1(self):
         list_of_conflicts = [{1, 2}, {3, 4}, {1, 2, 5}]
@@ -119,9 +108,6 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_1(self):
         list_of_conflicts = [{1, 2, 5}, {1, 2}, {3, 4}]
@@ -132,9 +118,6 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_2(self):
         list_of_conflicts = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15},
@@ -147,9 +130,6 @@ class TestRcTree(TestCase):
             self.assertEqual(expected_mhs,
                              list(rc_tree.generate_minimal_hitting_sets()))
             self.assertTrue(rc_tree.verify())
-            self.assertEqual(len(rc_tree.nodes),
-                             len(list(
-                                 rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_3(self):
         list_of_conflicts = [{1, 2, 3, 4, 7}, {1, 2, 4, 6, 8, 10},
@@ -167,17 +147,12 @@ class TestRcTree(TestCase):
         self.assertEqual(expected_mhs,
                          list(rc_tree.generate_minimal_hitting_sets()))
         self.assertTrue(rc_tree.verify())
-        self.assertEqual(len(rc_tree.nodes),
-                         len(list(
-                             rc_tree.breadth_first_explore(rc_tree.root))))
         rc_tree = RcTree(list_of_conflicts)
         rc_tree.solve(prune=True)
-        self.assertEqual(expected_mhs,
-                         list(rc_tree.generate_minimal_hitting_sets()))
+        self.assertEqual(set(map(frozenset, expected_mhs)),
+                         set(map(frozenset,
+                                 rc_tree.generate_minimal_hitting_sets())))
         self.assertTrue(rc_tree.verify())
-        self.assertEqual(len(rc_tree.nodes),
-                         len(list(
-                             rc_tree.breadth_first_explore(rc_tree.root))))
 
     def test_linear_problem(self):
         list_of_conflicts = list(linear_conflicts(4, 3))
@@ -203,17 +178,10 @@ class TestRcTree(TestCase):
         self.assertEqual(expected_mhs,
                          list(rc_tree.generate_minimal_hitting_sets()))
         self.assertTrue(rc_tree.verify())
-        self.assertEqual(len(rc_tree.nodes),
-                         len(list(
-                             rc_tree.breadth_first_explore(rc_tree.root))))
         rc_tree.solve(prune=True)
         self.assertEqual(expected_mhs,
                          list(rc_tree.generate_minimal_hitting_sets()))
         self.assertTrue(rc_tree.verify())
-        self.assertEqual(len(rc_tree.nodes),
-                         len(list(
-                             rc_tree.breadth_first_explore(rc_tree.root))))
-
 
     def test_solving_does_not_alter_list_of_conflicts(self):
         list_of_conflicts = [{1, 2, 5}, {3, 4}, {1, 2}]
@@ -230,7 +198,6 @@ class TestRcTree(TestCase):
         rc_tree.solve()
         rc_tree.reset()
         self.assertEqual(0, len(list(rc_tree.generate_minimal_hitting_sets())))
-        self.assertEqual(0, len(rc_tree.nodes))
         self.assertIsNone(rc_tree.root)
         self.assertEqual(0, len(
             list(rc_tree.breadth_first_explore(rc_tree.root))))
