@@ -213,7 +213,8 @@ class HsDag(mhs.MinimalHittingSetsProblem):
             subdag_root_to_remove.parents.pop(edge_to_trim)
         except KeyError:
             return
-        for subdag_node in list(self.breadth_first_explore(subdag_root_to_remove)):
+        for subdag_node in list(
+                self.breadth_first_explore(subdag_root_to_remove)):
             self._unlink_immediate_children_from_parent(subdag_node)
             if subdag_node.is_orphan:
                 del subdag_node
@@ -228,11 +229,16 @@ class HsDag(mhs.MinimalHittingSetsProblem):
     def breadth_first_explore(root: HsDagNode):
         if not root:
             return
+        visited = set()
         descendants = queue.deque()
         descendants.append(root)
+        visited.add(root)
         while descendants:
             descendant = descendants.popleft()
-            descendants.extend(descendant.children.values())
+            for child in descendant.children.values():
+                if child not in visited:
+                    descendants.append(child)
+                    visited.add(child)
             yield descendant
 
     def _create_children(self, node_in_processing: HsDagNode):

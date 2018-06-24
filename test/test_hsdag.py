@@ -161,8 +161,8 @@ class TestHsDag(TestCase):
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
         hs_dag.solve(prune=True)
-        self.assertEqual(expected_mhs,
-                         list(hs_dag.generate_minimal_hitting_sets()))
+        self.assertEqual(set(map(frozenset, expected_mhs)),
+                         set(map(frozenset, hs_dag.generate_minimal_hitting_sets())))
         self.assertTrue(hs_dag.verify())
 
     def test_linear_problem(self):
