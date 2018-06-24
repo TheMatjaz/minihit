@@ -37,7 +37,7 @@ def compare_from_file(input_file_name, render: bool = False,
     parser = getconflicts.ConflictSetsFileParser()
     parser.parse(input_file_name)
     for line, list_of_conflicts in parser.sets_by_line.items():
-        print("Line: {:d}".format(line))
+        print("------\nLine: {:d}".format(line))
         compare(list_of_conflicts, render, output_files_prefix, prune, sort)
 
 
@@ -67,10 +67,12 @@ def compare(list_of_conflicts: List[set], render: bool = False,
     hs_dag = hsdag.HsDag(list_of_conflicts)
     elapsed_hsdag = hs_dag.solve(prune=prune, sort=sort)
     solution_hsdag = list(hs_dag.generate_minimal_hitting_sets())
+    frozen_solution_hsdag = set(map(frozenset, solution_hsdag))
     hs_dag_solution_is_correct = hs_dag.verify()
     rc_tree = rctree.RcTree(list_of_conflicts)
     elapsed_rctree = rc_tree.solve(prune=prune, sort=sort)
     solution_rctree = list(rc_tree.generate_minimal_hitting_sets())
+    frozen_solution_rctree = set(map(frozenset, solution_rctree))
     rc_tree_solution_is_correct = rc_tree.verify()
     report = \
         "Conflict sets: {:}\n" \
@@ -91,7 +93,7 @@ def compare(list_of_conflicts: List[set], render: bool = False,
             list_of_conflicts,
             solution_hsdag,
             solution_rctree,
-            solution_hsdag == solution_rctree,
+            frozen_solution_hsdag == frozen_solution_rctree,
             hs_dag_solution_is_correct,
             rc_tree_solution_is_correct,
             elapsed_hsdag,
