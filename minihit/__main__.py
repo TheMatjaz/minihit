@@ -50,7 +50,7 @@ for argument in sys.argv[1:]:
     elif argument.startswith('outprefix'):
         output_files_prefix = argument.split('=', 1)[1]
 compare_from_file(sys.argv[1],
-                  render=True,
+                  render=render,
                   output_files_prefix=output_files_prefix,
                   prune=prune,
                   sort=sort)
