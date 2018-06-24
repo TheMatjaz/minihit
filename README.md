@@ -85,16 +85,18 @@ the set elements could be anything.
 >>> import minihit
 >>> minihit.compare([{1, 2, 3}, {1, 3, 4}, {6, 7}])
 Conflict sets: [{1, 2, 3}, {1, 3, 4}, {6, 7}]
-HSDAG solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
+HSDAG solution:   [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
 RC-Tree solution: [{1, 6}, {1, 7}, {3, 6}, {3, 7}, {2, 4, 6}, {2, 4, 7}]
 Algorithm produce same result: True
-HSDAG runtime [s]: 0.000265
-RC-Tree runtime [s]: 0.000245
-HSDAG/RC-Tree runtime [%]:  92.446
-HSDAG nodes constructed: 17
+HSDAG solution is correct:     True
+RC-Tree solution is correct:   True
+HSDAG runtime [s]:   0.000646
+RC-Tree runtime [s]: 0.000375
+HSDAG/RC-Tree runtime [%]: 172.219
+HSDAG nodes constructed:   17
 RC-Tree nodes constructed: 14
 RC-Tree/HSDAG constructions [%]:  82.353
-HSDAG nodes: 13
+HSDAG nodes:   13
 RC-Tree nodes: 12
 RC-Tree/HSDAG nodes [%]:  92.308
 
@@ -143,4 +145,8 @@ The solver classes you may want are subclasses of the
 # Solve for another set of conflicts
 >>> rctree.list_of_conflicts = [{1, 2}, {3}]
 >>> rctree.solve()
+
+# Explore the generated DAG/Tree from the root (without revisiting nodes)
+>>> for node in rctree.breadth_first_explore(rctree.root):
+>>>     print(node)
 ```
