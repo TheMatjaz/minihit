@@ -3,7 +3,7 @@
 import os
 from unittest import TestCase
 
-from minihit.getconflicts import ConflictSetsFileParser
+from minihit.getconflicts import ConflictSetsFileParser, linear_conflicts
 
 
 class TestConflictSetsFileParser(TestCase):
@@ -52,3 +52,17 @@ class TestConflictSetsFileParser(TestCase):
             parser = ConflictSetsFileParser()
             result = parser.parse(relative_file_path)
             self.assertDictEqual(expected, result, file_name)
+
+
+class TestLinearConflictsGenerator(TestCase):
+    def test_linear_conflicts_overlap_one(self):
+        expected = [{1,2,3}, {3,4,5}, {5,6,7}, {7,8,9}]
+        obtained = list(linear_conflicts(4, 3))
+        self.assertEqual(expected, obtained)
+
+    def test_linear_conflicts_overlap_three(self):
+        expected = [{1,2,3,4,5}, {3,4,5,6,7}, {5,6,7,8,9}, {7,8,9,10,11}]
+        obtained = list(linear_conflicts(4, 5, 3))
+        self.assertEqual(expected, obtained)
+
+

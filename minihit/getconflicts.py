@@ -97,3 +97,30 @@ def random_conflicts(amount_conflicts: int, max_cardinality: int
         conflict = set(random.randint(1, max_cardinality)
                        for i in range(cardinality))
         yield conflict
+
+
+def linear_conflicts(amount_conflicts: int, cardinality: int,
+                     overlap: int = 1
+                     ) -> Generator[Set[int], None, None]:
+    """
+    Generator of a linear sequence of conflicts containing integers with
+    overlapping values between neighbours.
+
+    Args:
+        amount_conflicts: number of conflicts to generate
+        cardinality: size of each conflict in the sequence
+        overlap: amount of values to be overlapping
+
+    Returns:
+        generator of the conflicts.
+    """
+    if overlap > cardinality:
+        raise ValueError("Overlap must be smaller than cardinality.")
+    if amount_conflicts <= 0 or cardinality <= 0 or overlap <= 0:
+        raise ValueError(
+            "The linear problem parameters must be strictly positive.")
+    previous_last = 1
+    for conflict_index in range(amount_conflicts):
+        conflict = set(range(previous_last, previous_last + cardinality))
+        previous_last += cardinality - overlap
+        yield conflict
