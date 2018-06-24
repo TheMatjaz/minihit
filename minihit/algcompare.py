@@ -77,15 +77,15 @@ def compare(list_of_conflicts: List[set], render: bool = False,
         "HSDAG solution:   {:}\n" \
         "RC-Tree solution: {:}\n" \
         "Algorithm produce same result: {:}\n" \
-        "HSDAG solution is correct: {:}\n" \
-        "RC-Tree solution is correct: {:}\n" \
-        "HSDAG runtime [s]: {:f}\n" \
+        "HSDAG solution is correct:     {:}\n" \
+        "RC-Tree solution is correct:   {:}\n" \
+        "HSDAG runtime [s]:   {:f}\n" \
         "RC-Tree runtime [s]: {:f}\n" \
         "HSDAG/RC-Tree runtime [%]: {:7.3f}\n" \
-        "HSDAG nodes constructed: {:d}\n" \
+        "HSDAG nodes constructed:   {:d}\n" \
         "RC-Tree nodes constructed: {:d}\n" \
         "RC-Tree/HSDAG constructions [%]: {:7.3f}\n" \
-        "HSDAG nodes: {:d}\n" \
+        "HSDAG nodes:   {:d}\n" \
         "RC-Tree nodes: {:d}\n" \
         "RC-Tree/HSDAG nodes [%]: {:7.3f}".format(
             list_of_conflicts,
@@ -101,9 +101,10 @@ def compare(list_of_conflicts: List[set], render: bool = False,
             rc_tree.amount_of_nodes_constructed,
             rc_tree.amount_of_nodes_constructed /
             hs_dag.amount_of_nodes_constructed * 100,
-            len(hs_dag.nodes),
-            len(rc_tree.nodes),
-            len(rc_tree.nodes) / len(hs_dag.nodes) * 100,
+            len(list(hs_dag.breadth_first_explore(hs_dag.root))),
+            len(list(rc_tree.breadth_first_explore(rc_tree.root))),
+            len(list(rc_tree.breadth_first_explore(rc_tree.root)))
+            / len(list(hs_dag.breadth_first_explore(hs_dag.root))) * 100,
         )
     print(report)
     if render:
