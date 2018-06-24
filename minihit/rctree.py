@@ -5,7 +5,7 @@
 # All rights reserved.
 # This file is part of the MiniHit project which is released under
 # the BSD 3-clause license.
-
+import queue
 from typing import List
 
 from . import hsdag
@@ -49,7 +49,7 @@ class RcTreeNode(hsdag.HsDagNode):
             str(self.path_from_root),
             '{}' if len(self.theta) == 0 else str(self.theta),
             '{}' if len(self.theta_c) == 0 else str(self.theta_c),
-)
+        )
 
 
 class RcTree(hsdag.HsDag):
@@ -71,6 +71,7 @@ class RcTree(hsdag.HsDag):
             other_node.theta_c.discard(conflict)
             self._trim_subdag(other_node, conflict)
         self._propagate_thetas_changes(other_node, difference)
+        self._create_newly_allowed_descendants(other_node)
         try:
             self._working_list_of_conflicts.remove(previous_label)
         except ValueError as label_not_in_conflicts:
@@ -80,11 +81,19 @@ class RcTree(hsdag.HsDag):
             self, other_node: RcTreeNode, difference: set):
         for descendant in self.breadth_first_explore(other_node):
             if descendant is other_node:
-                continue  # Children only, not the subdag parent
+                continue  # Children only, not the subdag root
             descendant.theta_c.difference_update(difference)
             descendant.theta = descendant.theta_c.union(
                 descendant.parent.theta)
-            self._create_all_allowed_edges(descendant)
+            self._create_children(other_node)
+
+    def _create_newly_allowed_descendants(self, other_node: RcTreeNode):
+        # Children only, not the subdag root
+        descendants = queue.deque(other_node.children.values())
+        while descendants:
+            descendant = descendants.popleft()
+            self._create_children(descendant)
+            descendants.extend(descendant.children.values())
 
     @staticmethod
     def _create_all_allowed_edges(node: RcTreeNode):
@@ -93,6 +102,8 @@ class RcTree(hsdag.HsDag):
                 node.children.setdefault(allowed_edge)
 
     def _create_children(self, node_in_processing: RcTreeNode):
+        if node_in_processing.label is None:
+            return
         conflicts_generating_edges = \
             node_in_processing.label.difference(
                 node_in_processing.theta)
