@@ -188,10 +188,11 @@ class HsDag(mhs.MinimalHittingSetsProblem):
                     self._relabel_and_trim(node_in_processing, other_node)
 
     def _label_was_previously_used(self, node_in_processing: HsDagNode):
-        if node_in_processing.is_ticked:
+        if node_in_processing.label is None:
             return True
         for node in self.breadth_first_explore(self.root):
-            if node_in_processing.label == node.label:
+            if (node_in_processing is not node
+                    and node_in_processing.label == node.label):
                 return True
         return False
 
