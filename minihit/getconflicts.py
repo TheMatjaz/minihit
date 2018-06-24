@@ -47,11 +47,12 @@ class ConflictSetsFileParser(object):
 
     def _cleaned_line(self, line):
         no_whitespaces = ''.join(line.split())
-        without_comments = no_whitespaces.split(self.comment_char, 1)[0]
-        without_brackets = without_comments.replace('{', '').replace('}', '')
-        without_brackets = without_brackets.replace('[', '').replace(']', '')
-        without_brackets = without_brackets.replace('(', '').replace(')', '')
-        return without_brackets
+        processed = no_whitespaces.split(self.comment_char, 1)[0]
+        processed = processed.replace('},{', self.set_separator)
+        processed = processed.replace('{', '').replace('}', '')
+        processed = processed.replace('[', '').replace(']', '')
+        processed = processed.replace('(', '').replace(')', '')
+        return processed
 
     def _line_to_sets(self, line):
         line = line.strip(self.set_separator)
@@ -92,6 +93,7 @@ def random_conflicts(amount_conflicts: int, max_cardinality: int
         generator of the conflicts.
     """
     for i in range(amount_conflicts):
+        cardinality = random.randint(1, max_cardinality)
         conflict = set(random.randint(1, max_cardinality)
-                       for i in range(max_cardinality))
+                       for i in range(cardinality))
         yield conflict
