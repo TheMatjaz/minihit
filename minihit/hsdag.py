@@ -186,8 +186,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         if not self._label_was_previously_used(node_in_processing):
             for other_node in list(self.nodes):
                 if (not other_node.is_ticked
-                        and node_in_processing.label.issubset(
-                            other_node.label)):
+                        and node_in_processing.label < other_node.label):
                     self._relabel_and_trim(node_in_processing, other_node)
 
     def _label_was_previously_used(self, node_in_processing: HsDagNode):
