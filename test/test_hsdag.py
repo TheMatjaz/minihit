@@ -72,14 +72,12 @@ class TestHsDag(TestCase):
         hs_dag = HsDag([])
         for solve_args in self.solve_options:
             elapsed = hs_dag.solve(*solve_args)
-            self.assertEqual(0, len(hs_dag.nodes))
             self.assertEqual([], list(hs_dag.generate_minimal_hitting_sets()))
             self.assertIsNone(hs_dag.root)
             self.assertTrue(elapsed < 0.5)
             self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
+            self.assertEqual(0, len(list(
+                hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_minimal_sorted_list_of_conflicts_1(self):
         list_of_conflicts = [{1, 3}, {1, 4}]
@@ -90,9 +88,6 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_minimal_unsorted_list_of_conflicts_2(self):
         list_of_conflicts = [{3, 4, 5}, {1}]
@@ -103,9 +98,6 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_minimal_sorted_list_of_conflicts_2(self):
         list_of_conflicts = [{1}, {3, 4, 5}]
@@ -116,9 +108,6 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_sorted_list_of_conflicts_1(self):
         list_of_conflicts = [{1, 2}, {3, 4}, {1, 2, 5}]
@@ -129,9 +118,6 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_1(self):
         list_of_conflicts = [{1, 2, 5}, {1, 2}, {3, 4}]
@@ -142,9 +128,6 @@ class TestHsDag(TestCase):
             self.assertEqual(expected_mhs,
                              list(hs_dag.generate_minimal_hitting_sets()))
             self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_2(self):
         list_of_conflicts = [{1, 2, 3, 4}, {3}, {2, 4}, {15}, {9, 2, 15},
@@ -156,16 +139,10 @@ class TestHsDag(TestCase):
         self.assertEqual(expected_mhs,
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
-        self.assertEqual(len(hs_dag.nodes),
-                         len(list(
-                             hs_dag.breadth_first_explore(hs_dag.root))))
         hs_dag.solve(prune=True)
         self.assertEqual(expected_mhs,
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
-        self.assertEqual(len(hs_dag.nodes),
-                         len(list(
-                             hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_3(self):
         list_of_conflicts = [{1, 2, 3, 4, 7}, {1, 2, 4, 6, 8, 10},
@@ -183,16 +160,10 @@ class TestHsDag(TestCase):
         self.assertEqual(expected_mhs,
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
-        self.assertEqual(len(hs_dag.nodes),
-                         len(list(
-                             hs_dag.breadth_first_explore(hs_dag.root))))
         hs_dag.solve(prune=True)
         self.assertEqual(expected_mhs,
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
-        self.assertEqual(len(hs_dag.nodes),
-                         len(list(
-                             hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_linear_problem(self):
         list_of_conflicts = list(linear_conflicts(4, 3))
@@ -218,16 +189,10 @@ class TestHsDag(TestCase):
         self.assertEqual(expected_mhs,
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
-        self.assertEqual(len(hs_dag.nodes),
-                         len(list(
-                             hs_dag.breadth_first_explore(hs_dag.root))))
         hs_dag.solve(prune=True)
         self.assertEqual(expected_mhs,
                          list(hs_dag.generate_minimal_hitting_sets()))
         self.assertTrue(hs_dag.verify())
-        self.assertEqual(len(hs_dag.nodes),
-                         len(list(
-                             hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_does_not_alter_list_of_conflicts(self):
         list_of_conflicts = [{1, 2, 5}, {3, 4}, {1, 2}]
@@ -240,11 +205,10 @@ class TestHsDag(TestCase):
 
     def test_resetting_deletes_everything(self):
         list_of_conflicts_initial = [{1}, {3, 4, 5}]
-        rc_tree = HsDag(list_of_conflicts_initial)
-        rc_tree.solve()
-        rc_tree.reset()
-        self.assertEqual(0, len(list(rc_tree.generate_minimal_hitting_sets())))
-        self.assertEqual(0, len(rc_tree.nodes))
-        self.assertIsNone(rc_tree.root)
+        hs_dag = HsDag(list_of_conflicts_initial)
+        hs_dag.solve()
+        hs_dag.reset()
+        self.assertEqual(0, len(list(hs_dag.generate_minimal_hitting_sets())))
+        self.assertIsNone(hs_dag.root)
         self.assertEqual(0, len(
-            list(rc_tree.breadth_first_explore(rc_tree.root))))
+            list(hs_dag.breadth_first_explore(hs_dag.root))))

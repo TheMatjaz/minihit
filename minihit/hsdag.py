@@ -136,7 +136,6 @@ class HsDag(mhs.MinimalHittingSetsProblem):
     def reset(self):
         self.amount_of_nodes_constructed = 0
         self.nodes_to_process.clear()
-        self.nodes = set()
         self.root = None
         self._working_list_of_conflicts = None
 
@@ -154,16 +153,15 @@ class HsDag(mhs.MinimalHittingSetsProblem):
                 self._remove_closed_node(node_in_processing)
                 continue
             self._label_node(node_in_processing)
-            if len(self.nodes) != 0 and prune:
+            if not self.root.is_orphan and prune:
                 self._prune(node_in_processing)
                 if node_in_processing.is_not_in_dag:
                     continue
             if node_in_processing.label is not None:
                 self._create_children(node_in_processing)
-            self.nodes.add(node_in_processing)
 
     def _attempt_closing_node(self, node_in_processing: HsDagNode):
-        for other_node in self.nodes:
+        for other_node in self.breadth_first_explore(self.root):
             if (other_node.path_from_root < node_in_processing.path_from_root
                     and other_node.is_ticked):
                 node_in_processing.close()
@@ -184,7 +182,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
 
     def _prune(self, node_in_processing: HsDagNode):
         if not self._label_was_previously_used(node_in_processing):
-            for other_node in list(self.nodes):
+            for other_node in list(self.breadth_first_explore(self.root)):
                 if (not other_node.is_ticked
                         and node_in_processing.label < other_node.label):
                     self._relabel_and_trim(node_in_processing, other_node)
@@ -192,7 +190,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
     def _label_was_previously_used(self, node_in_processing: HsDagNode):
         if node_in_processing.is_ticked:
             return True
-        for node in self.nodes:
+        for node in self.breadth_first_explore(self.root):
             if node_in_processing.label == node.label:
                 return True
         return False
@@ -218,7 +216,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         for subdag_node in self.breadth_first_explore(subdag_root_to_remove):
             self._unlink_immediate_children_from_parent(subdag_node)
             if subdag_node.is_orphan:
-                self.nodes.discard(subdag_node)
+                del subdag_node
 
     @staticmethod
     def _unlink_immediate_children_from_parent(generation_parent):
@@ -249,7 +247,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
                           ) -> HsDagNode:
         path_with_conflict = node_in_processing.path_from_root.union(
             [conflict])
-        for other_node in self.nodes:
+        for other_node in self.breadth_first_explore(self.root):
             if other_node.path_from_root == path_with_conflict:
                 return other_node
         self.amount_of_nodes_constructed += 1

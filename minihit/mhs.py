@@ -80,7 +80,6 @@ class MinimalHittingSetsProblem(object):
         """
         self._working_list_of_conflicts = None
         self.list_of_conflicts = list_of_conflicts
-        self.nodes = set()
         self.amount_of_nodes_constructed = 0
 
     def _clone_list_of_conflicts(self, sort: bool) -> None:
