@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
 
+from minihit import linear_conflicts
 from minihit.hsdag import HsDag, HsDagNode
 
 
@@ -171,6 +172,41 @@ class TestHsDag(TestCase):
                         {8, 10, 7}, {1, 10, 5}, {10, 2, 5}, {10, 3, 5},
                         {10, 4, 5}, {10, 5, 7}, {1, 10, 6}, {10, 2, 6},
                         {9, 10, 3, 6}, {9, 10, 4, 6}, {9, 10, 6, 7}]
+        hs_dag = HsDag(list_of_conflicts)
+        hs_dag.solve(sort=True)
+        self.assertEqual(expected_mhs,
+                         list(hs_dag.generate_minimal_hitting_sets()))
+        self.assertTrue(hs_dag.verify())
+        self.assertEqual(len(hs_dag.nodes),
+                         len(list(
+                             hs_dag.breadth_first_explore(hs_dag.root))))
+        hs_dag.solve(prune=True)
+        self.assertEqual(expected_mhs,
+                         list(hs_dag.generate_minimal_hitting_sets()))
+        self.assertTrue(hs_dag.verify())
+        self.assertEqual(len(hs_dag.nodes),
+                         len(list(
+                             hs_dag.breadth_first_explore(hs_dag.root))))
+
+    def test_linear_problem(self):
+        list_of_conflicts = list(linear_conflicts(4, 3))
+        expected_mhs = [{3, 7},
+                        {1, 4, 7},
+                        {8, 1, 5},
+                        {1, 5, 9},
+                        {1, 5, 7},
+                        {2, 4, 7},
+                        {8, 2, 5},
+                        {9, 2, 5},
+                        {2, 5, 7},
+                        {8, 3, 5},
+                        {9, 3, 5},
+                        {8, 3, 6},
+                        {9, 3, 6},
+                        {8, 1, 4, 6},
+                        {1, 4, 6, 9},
+                        {8, 2, 4, 6},
+                        {9, 2, 4, 6}]
         hs_dag = HsDag(list_of_conflicts)
         hs_dag.solve(sort=True)
         self.assertEqual(expected_mhs,
