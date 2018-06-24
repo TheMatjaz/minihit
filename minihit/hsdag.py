@@ -153,7 +153,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
                 self._remove_closed_node(node_in_processing)
                 continue
             self._label_node(node_in_processing)
-            if not self.root.is_orphan and prune:
+            if not self.root.is_childless and prune:
                 self._prune(node_in_processing)
                 if node_in_processing.is_not_in_dag:
                     continue
@@ -213,7 +213,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
             subdag_root_to_remove.parents.pop(edge_to_trim)
         except KeyError:
             return
-        for subdag_node in self.breadth_first_explore(subdag_root_to_remove):
+        for subdag_node in list(self.breadth_first_explore(subdag_root_to_remove)):
             self._unlink_immediate_children_from_parent(subdag_node)
             if subdag_node.is_orphan:
                 del subdag_node
