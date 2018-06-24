@@ -89,7 +89,9 @@ class MinimalHittingSetsProblem(object):
             self._working_list_of_conflicts = sorted(self.list_of_conflicts,
                                                     key=len)
         else:
-            self._working_list_of_conflicts = list(self.list_of_conflicts)
+            if isinstance(self.list_of_conflicts, Generator):
+                self.list_of_conflicts = list(self.list_of_conflicts)
+            self._working_list_of_conflicts = self.list_of_conflicts.copy()
 
     def solve(self, **kwargs) -> None:
         raise NotImplementedError("Has to be implemented by subclass.")
