@@ -164,8 +164,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
 
     def _attempt_closing_node(self, node_in_processing: HsDagNode):
         for other_node in self.nodes:
-            if (other_node.path_from_root.issubset(
-                    node_in_processing.path_from_root)
+            if (other_node.path_from_root < node_in_processing.path_from_root
                     and other_node.is_ticked):
                 node_in_processing.close()
                 return
