@@ -152,14 +152,20 @@ class TestHsDag(TestCase):
         expected_mhs = [{8, 2, 3, 15}, {2, 3, 7, 15}, {8, 3, 4, 15},
                         {3, 4, 7, 15}]
         hs_dag = HsDag(list_of_conflicts)
-        for solve_args in self.solve_options:
-            hs_dag.solve(*solve_args)
-            self.assertEqual(expected_mhs,
-                             list(hs_dag.generate_minimal_hitting_sets()))
-            self.assertTrue(hs_dag.verify())
-            self.assertEqual(len(hs_dag.nodes),
-                             len(list(
-                                 hs_dag.breadth_first_explore(hs_dag.root))))
+        hs_dag.solve(sort=True)
+        self.assertEqual(expected_mhs,
+                         list(hs_dag.generate_minimal_hitting_sets()))
+        self.assertTrue(hs_dag.verify())
+        self.assertEqual(len(hs_dag.nodes),
+                         len(list(
+                             hs_dag.breadth_first_explore(hs_dag.root))))
+        hs_dag.solve(prune=True)
+        self.assertEqual(expected_mhs,
+                         list(hs_dag.generate_minimal_hitting_sets()))
+        self.assertTrue(hs_dag.verify())
+        self.assertEqual(len(hs_dag.nodes),
+                         len(list(
+                             hs_dag.breadth_first_explore(hs_dag.root))))
 
     def test_solving_nonminimal_unsorted_list_of_conflicts_3(self):
         list_of_conflicts = [{1, 2, 3, 4, 7}, {1, 2, 4, 6, 8, 10},
