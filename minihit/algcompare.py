@@ -7,7 +7,7 @@ High-level comparator between the HSDAG and RC-Tree algorithms.
 
 from typing import List
 
-from . import hsdag, rctree, getconflicts
+from . import getconflicts, hsdag, rctree
 
 
 def compare_from_file(input_file_name, render: bool = False,
@@ -111,8 +111,8 @@ def compare(list_of_conflicts: List[set], render: bool = False,
     print(report)
     if render:
         if output_files_prefix:
-            hs_dag.render(output_files_prefix + '_hsdag.gv')
-            rc_tree.render(output_files_prefix + '_rctree.gv')
+            hs_dag.render(output_files_prefix + '_hsdag')
+            rc_tree.render(output_files_prefix + '_rctree')
         else:
             hs_dag.render()
             rc_tree.render()

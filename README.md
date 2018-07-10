@@ -61,17 +61,16 @@ python -m minihit input.txt --sort --render
 ```
 (on your system it may be called `python3` instead of `python`).
 
-The content of `input.txt` file has to be formatted as follows:
+The content of `input.txt` file has to be formatted in one of the two following
+syntaxes, which are equivalent
 ```
 1,2,3|1,3,4|6,7  # This is a comment
 |||1,1,1,1,2|  # This is the second malformatted problem with only a set {1,2}
 ```
 
-which is equivalent to the following conflict sets as in Python syntax:
-
-```python
-[{1, 2, 3}, {1, 3, 4}, {6, 7}]
-[{1, 2}]
+```
+[{1, 2, 3}, {1, 3, 4}, {6, 7}]  # This is written in Python syntax
+[{1, 2}]  # it's easy to copy-paste Python code in the input.txt file.
 ```
 
 **Note**: by default the set elements are integers, this can be configured
