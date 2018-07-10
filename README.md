@@ -9,11 +9,16 @@ diagnosis problems.
 
 MiniHit provides the following algorithms:
 
-- [HS-DAG](http://www.cs.ru.nl/P.Lucas/teaching/KeR/Theorist/greibers-correctiontoreiter.pdf)
-  by Raymond Reiter, later corrected by Russell Greiner, Barbara A. Smith and 
-  Ralph W. Wilkerson
-- [RC-Tree](http://www.ist.tugraz.at/pill/downloads/IWPD15_p5_preprint.pdf)
-  by Ingo Pill and Thomas Quaritsch
+- **HS-DAG** by Raymond Reiter with the correcteions by Russell Greiner, 
+  Barbara A. Smith and Ralph W. Wilkerson:
+  - [R. Reiter, A theory of diagnosis from first principles, Artificial 
+     Intelligence 32 (1987) 57-95](http://www.cs.ru.nl/P.Lucas/teaching/KeR/Theorist/reiteraij87.pdf)
+  - [R. Greiner, B. A. Smith and R. W. Wilkerson, A Correction to the
+     Algorithm in Reiter's Theory of Diagnosis, Artificial Intelligence 41
+     (1989/90) 79-88](http://www.cs.ru.nl/P.Lucas/teaching/KeR/Theorist/greibers-correctiontoreiter.pdf)
+- **RC-Tree** by Ingo Pill and Thomas Quaritsch:
+  - [I. Pill and T. Quaritsch, RC-Tree: A Variant Avoiding all the 
+     Redundancy in Reiter’s Minimal Hitting Set Algorithm, (2015)](http://www.ist.tugraz.at/pill/downloads/IWPD15_p5_preprint.pdf)
 
 
 Requirements
