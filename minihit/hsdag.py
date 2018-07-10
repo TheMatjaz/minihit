@@ -118,7 +118,7 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         import os
         out_file = os.path.join(
             tempfile.gettempdir(),
-            'temp_{:s}.gv'.format(self.__class__.__name__))
+            'temp_{:s}'.format(self.__class__.__name__))
         return out_file
 
     def solve(self, prune: bool = True,
