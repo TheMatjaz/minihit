@@ -14,8 +14,7 @@ from . import hsdag
 class RcTreeNode(hsdag.HsDagNode):
     def __init__(self):
         super().__init__()
-        self.theta_c = set()  # a.k.a. theta_c(node) =
-        # edges already created by a parent, so no need to build them
+        self.theta_c = set()
         self.theta = set()
 
     @property
@@ -81,11 +80,10 @@ class RcTree(hsdag.HsDag):
             self, other_node: RcTreeNode, difference: set):
         for descendant in self.breadth_first_explore(other_node):
             if descendant is other_node:
-                continue  # Children only, not the subdag root
+                continue  # Children only, skip the subdag root
             descendant.theta_c.difference_update(difference)
             descendant.theta = descendant.theta_c.union(
                 descendant.parent.theta)
-            self._create_children(other_node)
 
     def _create_newly_allowed_descendants(self, other_node: RcTreeNode):
         # Children only, not the subdag root

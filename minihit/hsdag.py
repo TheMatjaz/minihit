@@ -90,7 +90,6 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         super().__init__(list_of_conflicts)
         self.nodes_to_process = queue.deque()
         self.root = None
-        # Optimization: keep set of paths form root and set of used labels
 
     def generate_minimal_hitting_sets(self) \
             -> Generator[mhs.SolutionSet, None, None]:
