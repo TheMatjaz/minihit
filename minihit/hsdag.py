@@ -8,7 +8,7 @@
 
 import queue
 import time
-from typing import Generator, List
+from typing import Generator
 
 from . import mhs
 
@@ -86,13 +86,12 @@ class HsDagNode(object):
 
 
 class HsDag(mhs.MinimalHittingSetsProblem):
-    def __init__(self, list_of_conflicts: List[set] = None):
+    def __init__(self, list_of_conflicts=None):
         super().__init__(list_of_conflicts)
         self.nodes_to_process = queue.deque()
         self.root = None
 
-    def generate_minimal_hitting_sets(self) \
-            -> Generator[mhs.SolutionSet, None, None]:
+    def generate_minimal_hitting_sets(self):
         for node in self.breadth_first_explore(self.root):
             if node.is_ticked:
                 yield node.path_from_root
@@ -120,8 +119,23 @@ class HsDag(mhs.MinimalHittingSetsProblem):
             'temp_{:s}'.format(self.__class__.__name__))
         return out_file
 
-    def solve(self, prune: bool = True,
-              sort: bool = False) -> float:
+    def solve(self, prune=True, sort=False):
+        """
+        Runs the algorithm that finds the minimal hitting sets for the
+        list of conflicts.
+
+        Args:
+            prune (bool): activates the pruning of the DAG during its
+                construction. This reduces data redundancy.
+            sort (bool): sorts the list of conflicts by cardinality of the
+                conflicts before executing the solving algorithm. This
+                completely removes the need for pruning (thus also deactivates
+                it automatically). A sorted list of conflicts is the
+                best-case scenario for the algorithm.
+
+        Returns:
+            float: elapsed execution time in seconds.
+        """
         start_time = time.time()
         self.reset()
         if self.list_of_conflicts:
@@ -226,7 +240,21 @@ class HsDag(mhs.MinimalHittingSetsProblem):
         generation_parent.children = {}
 
     @staticmethod
-    def breadth_first_explore(root: HsDagNode):
+    def breadth_first_explore(root):
+        """Generator of the nodes in the subdag starting from the passed node,
+        including it, in breadth-first order.
+
+        Modifications of the subdag between yields of this generator
+        may be done by the user of the generator.
+
+        Args:
+            root (HsDagNode): first node to be returned and starting
+                point of the subdag search.
+
+        Returns:
+            Generator[HsDagNode, None, None]: nodes in the subdag in
+                breadth-first order.
+        """
         if not root:
             return
         visited = set()

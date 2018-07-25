@@ -5,6 +5,7 @@
 # All rights reserved.
 # This file is part of the MiniHit project which is released under
 # the BSD 3-clause license.
+
 import queue
 from typing import List
 
