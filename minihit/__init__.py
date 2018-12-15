@@ -6,3 +6,5 @@ from .mhs import SolutionSet, MinimalHittingSetsProblem
 from .hsdag import HsDag
 from .rctree import RcTree
 from .algcompare import compare_from_file, compare
+
+VERSION = 'v1.0.1'
